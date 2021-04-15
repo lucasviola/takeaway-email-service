@@ -1,19 +1,34 @@
-# Travellist - Laravel Demo App
+# Takeaway Email Service
 
-This is a Laravel demo application created for our Laravel at Scale series. 
+This is an e-mail notification service.
 
-The branch `tutorial-02` covers containerizing the application to run it with Docker containers.
+## Settip up the app
 
-Once you have Docker and Docker Compose installed, you can get this environment up and running with:
+### What do you need?
+1. Docker and Docker compose
 
+## For the first execution
+1. Run the app with docker compose
+```
+docker-compose build app
+docker-compose up -d
+```
+2. Run composer in the app so to install the dependencies
+```
+docker-compose exec app composer install
+```
+
+3. Run artisan to generate an encryption key (TODO: remove)
+```
+docker-compose exec app php artisan key:generate
+```
+
+## How to run the app
 ```
 docker-compose build app
 docker-compose up -d
 ```
 
-## Tutorials in this Series:
-
-- [How to Install and Configure Laravel with LEMP on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-laravel-with-lemp-on-ubuntu-18-04)
-- [Containerizing a Laravel 6 Application for Development with Docker Compose on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/containerizing-a-laravel-6-application-for-development-with-docker-compose-on-ubuntu-18-04)
+## Other
 
 

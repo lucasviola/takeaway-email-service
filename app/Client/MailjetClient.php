@@ -14,9 +14,8 @@ class MailjetClient
             true,['version' => 'v3.1']);
 
         $response = $mailjetClient->post(Resources::$Email, ['body' => $this->buildBodyRequestFrom($message)]);
-        $response->success() && var_dump($response->getData());
 
-        return $message;
+        return $response->getBody();
     }
 
     private function buildBodyRequestFrom($message) {

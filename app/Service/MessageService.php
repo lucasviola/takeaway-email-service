@@ -7,15 +7,14 @@ use App\Client\MailjetClient;
 class MessageService
 {
 
-    private MailjetClient $mailjetClient
-    ;
+    private MailjetClient $mailjetClient;
 
     public function __construct(MailjetClient $mailjetClient)
     {
         $this->mailjetClient = $mailjetClient;
     }
 
-    public function sendEmail() {
-        return $this->mailjetClient->callSendMessage();
+    public function sendEmail($message) {
+        return $this->mailjetClient->callSendMessage($message);
     }
 }

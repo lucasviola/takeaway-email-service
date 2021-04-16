@@ -7,7 +7,7 @@ use Mailjet\Resources;
 
 class MailjetClient
 {
-    public function callSendMessage() {
+    public function callSendMessage($message) {
         $mailjetClient = new Client(
             '8308777a9b41fad649f5f640ab630d15',
             '694a4b5c97361f9d8346ae26e2df2a11',true,['version' => 'v3.1']);
@@ -16,17 +16,17 @@ class MailjetClient
             'Messages' => [
                 [
                     'From' => [
-                        'Email' => "lucasmatzenbacher@gmail.com",
-                        'Name' => "Lucas"
+                        'Email' => $message->getFrom()->getEmail(),
+                        'Name' => $message->getFrom()->getName()
                     ],
                     'To' => [
                         [
-                            'Email' => "lucasmatzenbacher@gmail.com",
-                            'Name' => "Lucas"
+                            'Email' => $message->getTo()->getEmail(),
+                            'Name' => $message->getTo()->getName()
                         ]
                     ],
-                    'Subject' => "Hello, from Takeaway Email Service",
-                    'TextPart' => "My first Mailjet email",
+                    'Subject' => $message->getSubject(),
+                    'TextPart' => $message->getMessage(),
                     'CustomID' => "developmentTest"
                 ]
             ]
@@ -34,6 +34,6 @@ class MailjetClient
         $response = $mailjetClient->post(Resources::$Email, ['body' => $body]);
         $response->success() && var_dump($response->getData());
 
-        return $response;
+        return $message;
     }
 }

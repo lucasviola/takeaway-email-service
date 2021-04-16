@@ -15,6 +15,6 @@ use Illuminate\Http\Request;
 
 Route::namespace('Message')->group(function () {
 
-    Route::get('/message', 'MessageController@send');
+    Route::post('/message', 'MessageController@send');
 
 });

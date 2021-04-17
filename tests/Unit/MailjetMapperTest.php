@@ -41,4 +41,28 @@ class MessageMapperTest extends TestCase
         $this->assertEquals($expectedMailjetMessage, $actualMailjetMessage);
     }
 
+    public function testShouldTransformRequestBodyIntoMessageDomainModel() {
+        $to = new To('name', 'email');
+        $from = new From('name', 'email');
+        $expectedMessage = new Message($from, $to, 'subject', 'message');
+        $messageMapper = new MessageMapper();
+        $jsonAsString = '{
+                          "from": {
+                            "name": "name",
+                            "email": "email"
+                          },
+                          "to": {
+                            "name": "name",
+                            "email": "email"
+                          },
+                          "subject": "subject",
+                          "message": "message"
+                        }';
+        $requestBody = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
+            $jsonAsString), true);
+
+        $actualMessage = $messageMapper->mapToDomainModel($requestBody);
+
+        $this->assertEquals($expectedMessage, $actualMessage);
+    }
 }

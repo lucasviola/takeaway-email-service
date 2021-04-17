@@ -4,7 +4,9 @@
 namespace App\Mapper;
 
 
+use App\Model\From;
 use App\Model\Message;
+use App\Model\To;
 
 class MessageMapper
 {
@@ -35,5 +37,14 @@ class MessageMapper
             ]
         ];
         return $mailjetMessage;
+    }
+
+    public function mapToDomainModel(array $requestBodyAsJson): Message
+    {
+        $to = new To($requestBodyAsJson['to']['name'], $requestBodyAsJson['to']['email']);
+        $from = new From($requestBodyAsJson['to']['name'], $requestBodyAsJson['to']['email']);
+        $message = new Message($from, $to, $requestBodyAsJson['subject'], $requestBodyAsJson['message']);
+
+        return $message;
     }
 }

@@ -2,15 +2,18 @@
 
 namespace App\Client;
 
+use App\Mapper\MessageMapper;
 use GuzzleHttp\Client;
 
 class MailjetClient
 {
     private $client;
+    private $mapper;
 
-    public function __construct(Client $client)
+    public function __construct(Client $client, MessageMapper $mapper)
     {
         $this->client = $client;
+        $this->mapper = $mapper;
     }
 
     public function callSendMessage($message) {
@@ -20,7 +23,7 @@ class MailjetClient
                 env('MAILJET_PRIVATE_KEY')
             ],
             'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => json_encode($this->buildBodyRequestFrom($message)),
+            'body' => json_encode($this->mapper->mapToMailjetMessage($message)),
             'debug' => false
         ];
 
@@ -29,7 +32,7 @@ class MailjetClient
         return $response->getBody();
     }
 
-    private function buildBodyRequestFrom($message) {
+    public function buildBodyRequestFrom($message) {
         $body = [
             'Messages' => [
                 [

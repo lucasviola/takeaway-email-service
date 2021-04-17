@@ -2,7 +2,7 @@
 
 namespace Tests\Client;
 
-use App\Client\MailjetClient;
+use App\Client\GenericClient;
 use App\Mapper\MessageMapper;
 use App\Model\From;
 use App\Model\Message;

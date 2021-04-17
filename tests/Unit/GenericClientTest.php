@@ -2,7 +2,8 @@
 
 namespace Tests\Client;
 
-use App\Client\MailjetClient;
+use App\Adapter\MailjetAdapter;
+use App\Client\GenericClient;
 use App\Mapper\MessageMapper;
 use App\Model\From;
 use App\Model\Message;
@@ -10,20 +11,19 @@ use App\Model\To;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 
-class MailjetClientTest extends TestCase
+class GenericClientTest extends TestCase
 {
 
-    public function testShouldPostToToMailjetApi()
+    public function testShouldPostMessageUsingMailjetAdapter()
     {
         $message = new Message(new From('name', 'email'),
             new To('name', 'email'), 'Test', 'Test');
         $httpClient = $this->getMockBuilder(Client::class)->getMock();
         $httpClient->expects($spy = $this->any())
             ->method('post');
-        $mapper = new MessageMapper();
-        $sut = new MailjetClient($httpClient, $mapper); //TODO: improve interface
+        $sut = new GenericClient($httpClient, new MailjetAdapter(new MessageMapper())); //TODO: improve interface
 
-        $sut->postMessageToMailjetApi($message);
+        $sut->post($message);
 
         $this->assertEquals(1, $spy->getInvocationCount());
     }

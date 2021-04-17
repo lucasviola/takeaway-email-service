@@ -2,19 +2,19 @@
 
 namespace App\Service;
 
-use App\Client\MailjetClient;
+use App\Client\GenericClient;
 
 class MessageService
 {
 
-    private MailjetClient $mailjetClient;
+    private GenericClient $genericClient;
 
-    public function __construct(MailjetClient $mailjetClient)
+    public function __construct(GenericClient $mailjetClient)
     {
-        $this->mailjetClient = $mailjetClient;
+        $this->genericClient = $mailjetClient;
     }
 
     public function sendEmail($message) {
-        return $this->mailjetClient->postMessageToMailjetApi($message);
+        return $this->genericClient->post($message);
     }
 }

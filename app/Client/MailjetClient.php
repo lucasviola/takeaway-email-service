@@ -24,7 +24,7 @@ class MailjetClient
             'debug' => false
         ];
 
-        $response = $this->client->post('https://api.mailjet.com/v3.1/send', $options);
+        $response = $this->client->post(env('MAILJET_MESSAGE_URL'), $options);
 
         return $response->getBody();
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Client;
+namespace Tests\Unit;
 
 use App\Client\GenericClient;
 use App\Mapper\MessageMapper;

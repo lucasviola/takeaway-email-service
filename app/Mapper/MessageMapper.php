@@ -42,7 +42,7 @@ class MessageMapper
     public function mapToDomainModel(array $requestBodyAsJson): Message
     {
         $to = new To($requestBodyAsJson['to']['name'], $requestBodyAsJson['to']['email']);
-        $from = new From($requestBodyAsJson['to']['name'], $requestBodyAsJson['to']['email']);
+        $from = new From($requestBodyAsJson['from']['name'], $requestBodyAsJson['from']['email']);
         $message = new Message($from, $to, $requestBodyAsJson['subject'], $requestBodyAsJson['message']);
 
         return $message;

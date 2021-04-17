@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Adapter;
+namespace Tests\Unit;
 
 use App\Mapper\MessageMapper;
 use App\Adapter\MailjetAdapter;

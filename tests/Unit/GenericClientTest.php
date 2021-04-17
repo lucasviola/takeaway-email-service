@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Client;
+namespace Tests\Unit;
 
 use App\Adapter\MailjetAdapter;
 use App\Client\GenericClient;

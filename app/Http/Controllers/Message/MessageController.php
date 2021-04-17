@@ -22,8 +22,8 @@ class MessageController extends Controller
     }
 
     public function send(Request $request) {
-        $requestBodyAsAnArray = $request->toArray();
-        $message = $this->messageMapper->mapToDomainModel($requestBodyAsAnArray);
+        $requestBody = json_decode($request->getContent(), true);
+        $message = $this->messageMapper->mapToDomainModel($requestBody);
 
         $response = $this->service->sendEmail($message);
 

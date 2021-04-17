@@ -2,18 +2,29 @@
 
 namespace App\Client;
 
-use Mailjet\Client;
-use Mailjet\Resources;
+use GuzzleHttp\Client;
 
 class MailjetClient
 {
-    public function callSendMessage($message) {
-        $mailjetClient = new Client(
-            env('MAILJET_PUBLIC_KEY'),
-            env('MAILJET_PRIVATE_KEY'),
-            true,['version' => 'v3.1']);
+    private $client;
 
-        $response = $mailjetClient->post(Resources::$Email, ['body' => $this->buildBodyRequestFrom($message)]);
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
+
+    public function callSendMessage($message) {
+        $options = [
+            'auth' => [
+                env('MAILJET_PUBLIC_KEY'),
+                env('MAILJET_PRIVATE_KEY')
+            ],
+            'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
+            'body' => json_encode($this->buildBodyRequestFrom($message)),
+            'debug' => false
+        ];
+
+        $response = $this->client->post('https://api.mailjet.com/v3.1/send', $options);
 
         return $response->getBody();
     }

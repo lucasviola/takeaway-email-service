@@ -34,6 +34,6 @@ class MessageController extends Controller
 
         $response = $this->service->sendEmail($message);
 
-        return response()->json($response, 202);
+        return response()->json($response->getContents(), 202);
     }
 }

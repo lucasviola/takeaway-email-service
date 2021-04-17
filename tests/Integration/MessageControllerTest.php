@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Integration;
 
 use App\Adapter\MailjetAdapter;
 use App\Client\GenericClient;
@@ -32,7 +32,7 @@ class MessageControllerTest extends TestCase
         $actualResponse = $controller->send($request);
 
         $this->assertEquals(202, $actualResponse->getStatusCode());
-        $this->assertEquals(json_encode($this->buildMailjetResponseBody()), $actualResponse->getContent());
+        $this->assertEquals($this->buildResponse(), $actualResponse->getContent());
     }
 
     private function buildRequestBody() {
@@ -53,5 +53,10 @@ class MessageControllerTest extends TestCase
 
     private function buildMailjetResponseBody(): string {
         return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';
+    }
+
+    private function buildResponse()
+    {
+        return '{"messageId":"1152921511742440156","status":"success"}';
     }
 }

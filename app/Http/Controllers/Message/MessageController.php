@@ -25,8 +25,17 @@ class MessageController extends Controller
         $requestBody = json_decode($request->getContent(), true);
         $message = $this->messageMapper->mapToDomainModel($requestBody);
 
-        $response = $this->service->sendEmail($message);
+        $externalServiceResponse =  $this->service->sendEmail($message);
+        $body = json_decode($externalServiceResponse->getContents(), true);
 
-        return response()->json($response->getContents(), 202);
+        return response()->json($this->buildResponseBodyFrom($body), 202);
+    }
+
+    public function buildResponseBodyFrom($externalServiceResponse): array {
+        $status = $externalServiceResponse['Messages'][0]['Status'];
+        $messageId = $externalServiceResponse['Messages'][0]['To'][0]['MessageID'];
+        $responseBody = ['messageId' => "$messageId", 'status' => $status];
+
+        return $responseBody;
     }
 }

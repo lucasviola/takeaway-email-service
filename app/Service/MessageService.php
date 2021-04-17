@@ -15,6 +15,6 @@ class MessageService
     }
 
     public function sendEmail($message) {
-        return $this->mailjetClient->callSendMessage($message);
+        return $this->mailjetClient->postMessageToMailjetApi($message);
     }
 }

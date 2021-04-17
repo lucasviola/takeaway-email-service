@@ -3,6 +3,7 @@
 namespace App\Client;
 
 use App\Mapper\MessageMapper;
+use App\Model\Message;
 use GuzzleHttp\Client;
 
 class MailjetClient
@@ -16,7 +17,7 @@ class MailjetClient
         $this->mapper = $mapper;
     }
 
-    public function callSendMessage($message) {
+    public function postMessageToMailjetApi(Message $message) {
         $options = [
             'auth' => [
                 env('MAILJET_PUBLIC_KEY'),
@@ -29,29 +30,7 @@ class MailjetClient
 
         $response = $this->client->post(env('MAILJET_MESSAGE_URL'), $options);
 
-        return $response->getBody();
-    }
 
-    public function buildBodyRequestFrom($message) {
-        $body = [
-            'Messages' => [
-                [
-                    'From' => [
-                        'Email' => $message->getFrom()->getEmail(),
-                        'Name' => $message->getFrom()->getName()
-                    ],
-                    'To' => [
-                        [
-                            'Email' => $message->getTo()->getEmail(),
-                            'Name' => $message->getTo()->getName()
-                        ]
-                    ],
-                    'Subject' => $message->getSubject(),
-                    'TextPart' => $message->getMessage(),
-                    'CustomID' => "developmentTest"
-                ]
-            ]
-        ];
-        return $body;
+        return $response->getBody();
     }
 }

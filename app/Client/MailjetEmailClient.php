@@ -21,7 +21,7 @@ class MailjetEmailClient
         $this->client = $client;
     }
 
-    public function postMessage(Message $message)
+    public function postMessage(Message $message): array
     {
         try {
             $response = $this->client->post('https://api.mailjet.com/v3.1/send',

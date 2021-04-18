@@ -10,13 +10,7 @@ use App\Model\To;
 
 class MessageMapper
 {
-
-    public function __construct()
-    {
-
-    }
-
-    public function mapToMailjetMessage(Message $message): array {
+    public function mapMessageToMailjetMessage(Message $message): array {
         $mailjetMessage = [
             'Messages' => [
                 [
@@ -39,7 +33,7 @@ class MessageMapper
         return $mailjetMessage;
     }
 
-    public function mapToDomainModel(array $requestBodyAsJson): Message
+    public function mapMessageRequestToDomainModel(array $requestBodyAsJson): Message
     {
         $to = new To($requestBodyAsJson['to']['name'], $requestBodyAsJson['to']['email']);
         $from = new From($requestBodyAsJson['from']['name'], $requestBodyAsJson['from']['email']);
@@ -48,7 +42,7 @@ class MessageMapper
         return $message;
     }
 
-    public function mapMailjetResponseToMessageResponse($externalServiceResponse)
+    public function mapMailjetResponseToMessageResponse(array $externalServiceResponse): array
     {
         $status = $externalServiceResponse['Messages'][0]['Status'];
         $messageId = $externalServiceResponse['Messages'][0]['To'][0]['MessageID'];

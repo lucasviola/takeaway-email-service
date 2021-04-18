@@ -23,7 +23,7 @@ class MessageController extends Controller
     public function send(Request $request): JsonResponse
     {
         $requestBody = json_decode($request->getContent(), true);
-        $message = $this->messageMapper->mapToDomainModel($requestBody);
+        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody);
 
         $externalServiceResponse =
             json_decode($this->service->sendEmail($message)->getContents(), true);

@@ -11,9 +11,10 @@ use PHPUnit\Framework\TestCase;
 
 class MailjetEmailClientTest extends TestCase
 {
-    private $mapper;
-    private $mailjetAdapter;
-    private $message;
+    private MessageMapper $mapper;
+    private MailjetEmailClient $mailjetAdapter;
+    private Message $message;
+
     protected function setUp(): void
     {
         $this->mapper = new MessageMapper();
@@ -29,7 +30,7 @@ class MailjetEmailClientTest extends TestCase
                 env('MAILJET_PRIVATE_KEY')
             ],
             'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => json_encode($this->mapper->mapToMailjetMessage($this->message)),
+            'body' => json_encode($this->mapper->mapMessageToMailjetMessage($this->message)),
             'debug' => false
         ];
         $actualRequestOptions = $this->mailjetAdapter->buildRequestOptions($this->message);

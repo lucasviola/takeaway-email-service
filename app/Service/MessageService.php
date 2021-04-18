@@ -2,19 +2,21 @@
 
 namespace App\Service;
 
-use App\Client\PostEmailAdapter;
+use App\Client\PostEmailService;
+use Psr\Http\Message\StreamInterface;
 
 class MessageService
 {
 
-    private PostEmailAdapter $client;
+    private PostEmailService $client;
 
-    public function __construct(PostEmailAdapter $client)
+    public function __construct(PostEmailService $client)
     {
         $this->client = $client;
     }
 
-    public function sendEmail($message) {
+    public function sendEmail($message): StreamInterface
+    {
         return $this->client->post($message);
     }
 }

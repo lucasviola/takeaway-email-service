@@ -9,7 +9,7 @@ use App\Model\Message;
 
 class MailjetEmailClient
 {
-    private $messageMapper;
+    private MessageMapper $messageMapper;
     private $url;
 
     public function __construct(MessageMapper $messageMapper)
@@ -29,7 +29,7 @@ class MailjetEmailClient
                 env('MAILJET_PRIVATE_KEY')
             ],
             'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => json_encode($this->messageMapper->mapToMailjetMessage($message)),
+            'body' => json_encode($this->messageMapper->mapMessageToMailjetMessage($message)),
             'debug' => false
         ];
     }

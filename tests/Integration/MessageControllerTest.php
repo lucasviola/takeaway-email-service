@@ -3,7 +3,7 @@
 namespace Tests\Integration;
 
 use App\Adapter\MailjetEmailClient;
-use App\Client\PostEmailAdapter;
+use App\Client\PostEmailService;
 use App\Http\Controllers\Message\MessageController;
 use App\Mapper\MessageMapper;
 use App\Service\MessageService;
@@ -24,7 +24,7 @@ class MessageControllerTest extends TestCase
         ]);
         $handlerStack = HandlerStack::create($client);
         $mockHttpClient = new Client(['handler' => $handlerStack]);
-        $client = new PostEmailAdapter($mockHttpClient, new MailjetEmailClient($mapper));
+        $client = new PostEmailService($mockHttpClient, new MailjetEmailClient($mapper));
         $service = new MessageService($client);
         $controller = new MessageController($service, $mapper);
         $request = new Request([], [], [], [], [], [], $this->buildRequestBody());

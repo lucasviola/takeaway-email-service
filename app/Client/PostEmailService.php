@@ -5,11 +5,12 @@ namespace App\Client;
 use App\Adapter\MailjetEmailClient;
 use App\Model\Message;
 use GuzzleHttp\Client;
+use Psr\Http\Message\StreamInterface;
 
-class PostEmailAdapter
+class PostEmailService
 {
-    private $client;
-    private $adapter;
+    private Client $client;
+    private MailjetEmailClient $adapter;
 
     public function __construct(Client $client, MailjetEmailClient $adapter)
     {
@@ -17,7 +18,8 @@ class PostEmailAdapter
         $this->adapter = $adapter;
     }
 
-    public function post(Message $message) {
+    public function post(Message $message)
+    {
 
         $response = $this->client->post($this->adapter->getUrl(),
             $this->adapter->buildRequestOptions($message));

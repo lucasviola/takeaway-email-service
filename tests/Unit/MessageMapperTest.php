@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Client\PostEmailAdapter;
+use App\Client\PostEmailService;
 use App\Mapper\MessageMapper;
 use App\Model\From;
 use App\Model\Message;
@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class MessageMapperTest extends TestCase
 {
-
     public function testShouldTransformMessageDomainIntoMailjetMessage() {
         $messageMapper = new MessageMapper();
         $message = new Message(new From('name', 'email'),
@@ -36,7 +35,7 @@ class MessageMapperTest extends TestCase
             ]
         ];
 
-        $actualMailjetMessage = $messageMapper->mapToMailjetMessage($message);
+        $actualMailjetMessage = $messageMapper->mapMessageToMailjetMessage($message);
 
         $this->assertEquals($expectedMailjetMessage, $actualMailjetMessage);
     }
@@ -61,7 +60,7 @@ class MessageMapperTest extends TestCase
         $requestBody = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
             $jsonAsString), true);
 
-        $actualMessage = $messageMapper->mapToDomainModel($requestBody);
+        $actualMessage = $messageMapper->mapMessageRequestToDomainModel($requestBody);
 
         $this->assertEquals($expectedMessage, $actualMessage);
     }

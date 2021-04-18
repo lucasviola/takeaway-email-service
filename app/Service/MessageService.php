@@ -15,7 +15,7 @@ class MessageService
         $this->postEmailService = $postEmailService;
     }
 
-    public function sendEmail($message)
+    public function sendEmail($message): array
     {
         return $this->postEmailService->post($message);
     }

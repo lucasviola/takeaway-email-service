@@ -18,7 +18,7 @@ class PostEmailService
         $this->sendGridEmailClient = $sendGridEmailClient;
     }
 
-    public function post(Message $message)
+    public function post(Message $message): array
     {
         try {
             return $this->mailjetClient->postMessage($message);

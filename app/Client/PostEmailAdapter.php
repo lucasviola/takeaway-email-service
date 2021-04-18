@@ -2,16 +2,16 @@
 
 namespace App\Client;
 
-use App\Adapter\MailjetAdapter;
+use App\Adapter\MailjetEmailClient;
 use App\Model\Message;
 use GuzzleHttp\Client;
 
-class GenericClient
+class PostEmailAdapter
 {
     private $client;
     private $adapter;
 
-    public function __construct(Client $client, MailjetAdapter $adapter)
+    public function __construct(Client $client, MailjetEmailClient $adapter)
     {
         $this->client = $client;
         $this->adapter = $adapter;

@@ -3,13 +3,13 @@
 namespace Tests\Unit;
 
 use App\Mapper\MessageMapper;
-use App\Adapter\MailjetAdapter;
+use App\Adapter\MailjetEmailClient;
 use App\Model\From;
 use App\Model\Message;
 use App\Model\To;
 use PHPUnit\Framework\TestCase;
 
-class MailjetAdapterTest extends TestCase
+class MailjetEmailClientTest extends TestCase
 {
     private $mapper;
     private $mailjetAdapter;
@@ -17,7 +17,7 @@ class MailjetAdapterTest extends TestCase
     protected function setUp(): void
     {
         $this->mapper = new MessageMapper();
-        $this->mailjetAdapter = new MailjetAdapter($this->mapper);
+        $this->mailjetAdapter = new MailjetEmailClient($this->mapper);
         $this->message = new Message(new From('name', 'email'),
             new To('name', 'email'), 'Test', 'Test');
     }

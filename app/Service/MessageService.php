@@ -2,15 +2,14 @@
 
 namespace App\Service;
 
-use App\Client\GenericClient;
-use App\Mapper\MessageMapper;
+use App\Client\PostEmailAdapter;
 
 class MessageService
 {
 
-    private GenericClient $client;
+    private PostEmailAdapter $client;
 
-    public function __construct(GenericClient $client)
+    public function __construct(PostEmailAdapter $client)
     {
         $this->client = $client;
     }

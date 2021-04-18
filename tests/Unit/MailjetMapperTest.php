@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Client\GenericClient;
+use App\Client\PostEmailAdapter;
 use App\Mapper\MessageMapper;
 use App\Model\From;
 use App\Model\Message;

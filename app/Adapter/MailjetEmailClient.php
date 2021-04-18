@@ -7,7 +7,7 @@ namespace App\Adapter;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
 
-class MailjetAdapter
+class MailjetEmailClient
 {
     private $messageMapper;
     private $url;

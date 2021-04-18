@@ -2,21 +2,21 @@
 
 namespace App\Service;
 
-use App\Service\PostEmailService;
-use Psr\Http\Message\StreamInterface;
-
 class MessageService
 {
 
     private PostEmailService $postEmailService;
+    private QueueEmailService $queueEmailService;
 
-    public function __construct(PostEmailService $postEmailService)
+    public function __construct(PostEmailService $postEmailService,
+                                QueueEmailService $queueEmailService)
     {
         $this->postEmailService = $postEmailService;
+        $this->queueEmailService = $queueEmailService;
     }
 
-    public function sendEmail($message): array
+    public function sendEmail($message): void
     {
-        return $this->postEmailService->post($message);
+        $this->queueEmailService->publish($message);
     }
 }

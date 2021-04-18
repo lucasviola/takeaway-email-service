@@ -3,11 +3,13 @@
 namespace Tests\Integration;
 
 use App\Client\MailjetEmailClient;
+use App\Client\RabbitMQClient;
 use App\Client\SendGridEmailClient;
 use App\Service\PostEmailService;
 use App\Http\Controllers\Message\MessageController;
 use App\Mapper\MessageMapper;
 use App\Service\MessageService;
+use App\Service\QueueEmailService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -28,7 +30,9 @@ class MessageControllerTest extends TestCase
         $mailjetClient = new MailjetEmailClient($mapper, $mockHttpClient);
         $sendgridClient = new SendGridEmailClient($mapper, $mockHttpClient);
         $client = new PostEmailService($mailjetClient, $sendgridClient);
-        $service = new MessageService($client);
+        $rabbitMqClient = $this->getMockBuilder(RabbitMQClient::class)->getMock();
+        $queueEmailservice = new QueueEmailService($rabbitMqClient, $mapper);
+        $service = new MessageService($client, $queueEmailservice);
         $controller = new MessageController($service, $mapper);
         $request = new Request([], [], [], [], [], [], $this->buildRequestBody());
 

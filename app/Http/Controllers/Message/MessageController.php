@@ -24,8 +24,8 @@ class MessageController extends Controller
         $requestBody = json_decode($request->getContent(), true);
         $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody);
 
-        $messageResponse = $this->service->sendEmail($message);
+        $this->service->sendEmail($message);
 
-        return response()->json($messageResponse, 202);
+        return response()->json([], 202);
     }
 }

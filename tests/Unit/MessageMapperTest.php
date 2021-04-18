@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Service\PostEmailService;
+use App\Client\PostEmailService;
 use App\Mapper\MessageMapper;
 use App\Model\From;
 use App\Model\Message;
@@ -11,6 +11,24 @@ use PHPUnit\Framework\TestCase;
 
 class MessageMapperTest extends TestCase
 {
+    private string $messageRequest;
+
+    protected function setUp(): void
+    {
+        $this->messageRequest = '{
+                          "from": {
+                            "name": "name",
+                            "email": "email"
+                          },
+                          "to": {
+                            "name": "name",
+                            "email": "email"
+                          },
+                          "subject": "subject",
+                          "message": "message"
+                        }';
+    }
+
     public function testShouldTransformMessageDomainIntoMailjetMessage() {
         $messageMapper = new MessageMapper();
         $message = new Message(new From('name', 'email'),
@@ -45,20 +63,8 @@ class MessageMapperTest extends TestCase
         $from = new From('name', 'email');
         $expectedMessage = new Message($from, $to, 'subject', 'message');
         $messageMapper = new MessageMapper();
-        $jsonAsString = '{
-                          "from": {
-                            "name": "name",
-                            "email": "email"
-                          },
-                          "to": {
-                            "name": "name",
-                            "email": "email"
-                          },
-                          "subject": "subject",
-                          "message": "message"
-                        }';
         $requestBody = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
-            $jsonAsString), true);
+            $this->messageRequest), true);
 
         $actualMessage = $messageMapper->mapMessageRequestToDomainModel($requestBody);
 
@@ -105,6 +111,28 @@ class MessageMapperTest extends TestCase
         $actualSendgridMessage = $messageMapper->mapMessageToSendgridMessage($message);
 
         $this->assertEquals($actualSendgridMessage, $expectedSendgridMessage);
+    }
+
+    public function testShouldMapMessageToString() {
+        $mapper = new MessageMapper();
+        $message = new Message(new From('name', 'email'),
+            new To('name', 'email'), 'Test', 'Test');
+        $expected = [
+            'from' => [
+                'name' => $message->getFrom()->getName(),
+                'email' => $message->getFrom()->getEmail(),
+            ],
+            'to' => [
+                'name' => $message->getTo()->getName(),
+                'email' => $message->getTo()->getEmail(),
+            ],
+            'subject' => $message->getSubject(),
+            'message' => $message->getMessage(),
+        ];
+
+        $actual =  $mapper->mapMessageToJson($message);
+
+        $this->assertEquals($actual, $expected);
     }
 
 

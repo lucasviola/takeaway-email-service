@@ -84,4 +84,20 @@ class MessageMapper
         ];
         return $sendgridMessage;
     }
+
+    public function mapMessageToJson(Message $message): array
+    {
+        return [
+            'from' => [
+                'name' => $message->getFrom()->getName(),
+                'email' => $message->getFrom()->getEmail(),
+            ],
+            'to' => [
+                'name' => $message->getTo()->getName(),
+                'email' => $message->getTo()->getEmail(),
+            ],
+            'subject' => $message->getSubject(),
+            'message' => $message->getMessage(),
+        ];
+    }
 }

@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Client\MailjetEmailClient;
 use App\Client\SendGridEmailClient;
-use App\Exceptions\MailjetNotAvailable;
+use App\Exceptions\MailjetNotAvailableException;
 use App\Model\Message;
 
 class PostEmailService
@@ -22,7 +22,7 @@ class PostEmailService
     {
         try {
             return $this->mailjetClient->postMessage($message);
-        } catch (MailjetNotAvailable $e) {
+        } catch (MailjetNotAvailableException $e) {
             return $this->sendGridEmailClient->postMessage($message);
         }
     }

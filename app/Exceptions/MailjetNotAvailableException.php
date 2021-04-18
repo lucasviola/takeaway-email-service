@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class MailjetNotAvailable extends Exception
+class MailjetNotAvailableException extends Exception
 {
 
     public function context()

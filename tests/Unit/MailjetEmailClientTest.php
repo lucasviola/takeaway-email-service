@@ -2,14 +2,17 @@
 
 namespace Tests\Unit;
 
+use App\Exceptions\MailjetNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Client\MailjetEmailClient;
 use App\Model\From;
 use App\Model\Message;
 use App\Model\To;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -56,6 +59,20 @@ class MailjetEmailClientTest extends TestCase
         $actualRequestOptions = $this->mailjetEmailClient->buildRequestOptions($this->message);
 
         $this->assertEquals($actualRequestOptions, $expectedRequestOptions);
+    }
+
+    public function testShouldThrowMailjetNotAvailableWhenHttpExceptionOccurs() {
+        $client = new MockHandler([
+            new RequestException('Error Communicating with Server',
+                new Request('POST', 'test'))
+        ]);
+        $handlerStack = HandlerStack::create($client);
+        $this->httpClient = new Client(['handler' => $handlerStack]);
+        $badMailjetClient =  new MailjetEmailClient($this->mapper, $this->httpClient);
+
+        $this->expectException(MailjetNotAvailableException::class);
+
+        $badMailjetClient->postMessage($this->message);
     }
 
     private function buildMailjetResponseBody(): string {

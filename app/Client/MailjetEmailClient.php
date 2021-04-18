@@ -4,7 +4,7 @@
 namespace App\Client;
 
 
-use App\Exceptions\MailjetNotAvailable;
+use App\Exceptions\MailjetNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
 use GuzzleHttp\Client;
@@ -31,7 +31,7 @@ class MailjetEmailClient
 
             return $this->messageMapper->mapMailjetResponseToMessageResponse($mailjetResponse);
         } catch (GuzzleException $e) {
-            throw new MailjetNotAvailable("Mailjet not available");
+            throw new MailjetNotAvailableException("Mailjet not available");
         }
     }
 

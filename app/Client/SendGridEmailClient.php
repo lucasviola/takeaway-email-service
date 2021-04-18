@@ -4,7 +4,7 @@
 namespace App\Client;
 
 
-use App\Exceptions\MailjetNotAvailable;
+use App\Exceptions\SendGridNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
 use GuzzleHttp\Client;
@@ -31,7 +31,7 @@ class SendGridEmailClient
 
             return $this->messageMapper->mapSendgridResponseToMessageResponse();
         } catch (GuzzleException $e) {
-            throw new MailjetNotAvailable("Sendgrid not available");
+            throw new SendGridNotAvailableException("Sendgrid not available");
         }
     }
 

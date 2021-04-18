@@ -2,15 +2,17 @@
 
 namespace Tests\Unit;
 
-use App\Client\MailjetEmailClient;
 use App\Client\SendGridEmailClient;
+use App\Exceptions\SendGridNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Model\From;
 use App\Model\Message;
 use App\Model\To;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -55,5 +57,20 @@ class SendGridEmailClientTest extends TestCase
         $actualRequestOptions = $this->sendGridEmailClient->buildRequestOptions($this->message);
 
         $this->assertEquals($actualRequestOptions, $expectedRequestOptions);
+    }
+
+
+    public function testShouldThrowSendGridNotAvailableWhenHttpExceptionOccurs() {
+        $client = new MockHandler([
+            new RequestException('Error Communicating with Server',
+                new Request('POST', 'test'))
+        ]);
+        $handlerStack = HandlerStack::create($client);
+        $this->httpClient = new Client(['handler' => $handlerStack]);
+        $badSendGridClient =  new SendGridEmailClient($this->mapper, $this->httpClient);
+
+        $this->expectException(SendGridNotAvailableException::class);
+
+        $badSendGridClient->postMessage($this->message);
     }
 }

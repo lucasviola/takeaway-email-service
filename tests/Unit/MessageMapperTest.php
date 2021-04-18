@@ -76,6 +76,37 @@ class MessageMapperTest extends TestCase
         $this->assertEquals($actualMessageResponse, $expectedMessageResponse);
     }
 
+    public function testShouldMapFromMessageToSendgridMessage() {
+        $messageMapper = new MessageMapper();
+        $message = new Message(new From('name', 'email'),
+            new To('name', 'email'), 'Test', 'Test');
+        $expectedSendgridMessage = [
+            'personalizations' => [
+                0 => [
+                    'to' => [
+                        0 => [
+                            'email' => $message->getTo()->getEmail(),
+                        ],
+                    ],
+                ],
+            ],
+            'from' => [
+                'email' => $message->getFrom()->getEmail(),
+            ],
+            'subject' => $message->getSubject(),
+            'content' => [
+                0 => [
+                    'type' => 'text/plain',
+                    'value' => $message->getMessage(),
+                ],
+            ],
+        ];
+
+        $actualSendgridMessage = $messageMapper->mapMessageToSendgridMessage($message);
+
+        $this->assertEquals($actualSendgridMessage, $expectedSendgridMessage);
+    }
+
 
     private function buildMailjetResponseBody(): string {
         return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';

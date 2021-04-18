@@ -7,7 +7,6 @@ use App\Mapper\MessageMapper;
 use App\Service\MessageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class MessageController extends Controller
 {
@@ -23,12 +22,11 @@ class MessageController extends Controller
     public function send(Request $request): JsonResponse
     {
         $requestBody = json_decode($request->getContent(), true);
+
         $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody);
 
-        $externalServiceResponse =
-            json_decode($this->service->sendEmail($message)->getContents(), true);
+        $messageResponse = $this->service->sendEmail($message);
 
-        $messageResponse = $this->messageMapper->mapMailjetResponseToMessageResponse($externalServiceResponse);
         return response()->json($messageResponse, 202);
     }
 }

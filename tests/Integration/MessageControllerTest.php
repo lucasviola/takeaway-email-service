@@ -3,6 +3,7 @@
 namespace Tests\Integration;
 
 use App\Client\MailjetEmailClient;
+use App\Client\SendGridEmailClient;
 use App\Service\PostEmailService;
 use App\Http\Controllers\Message\MessageController;
 use App\Mapper\MessageMapper;
@@ -24,7 +25,9 @@ class MessageControllerTest extends TestCase
         ]);
         $handlerStack = HandlerStack::create($client);
         $mockHttpClient = new Client(['handler' => $handlerStack]);
-        $client = new PostEmailService(new MailjetEmailClient($mapper, $mockHttpClient));
+        $mailjetClient = new MailjetEmailClient($mapper, $mockHttpClient);
+        $sendgridClient = new SendGridEmailClient($mapper, $mockHttpClient);
+        $client = new PostEmailService($mailjetClient, $sendgridClient);
         $service = new MessageService($client);
         $controller = new MessageController($service, $mapper);
         $request = new Request([], [], [], [], [], [], $this->buildRequestBody());
@@ -35,7 +38,8 @@ class MessageControllerTest extends TestCase
         $this->assertEquals($this->buildResponse(), $actualResponse->getContent());
     }
 
-    private function buildRequestBody() {
+    private function buildRequestBody(): string
+    {
         $jsonAsString = '{
                           "from": {
                             "name": "name",
@@ -55,7 +59,7 @@ class MessageControllerTest extends TestCase
         return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';
     }
 
-    private function buildResponse()
+    private function buildResponse(): string
     {
         return '{"messageId":"1152921511742440156","status":"success"}';
     }

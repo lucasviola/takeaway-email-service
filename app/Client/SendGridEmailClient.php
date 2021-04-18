@@ -10,7 +10,7 @@ use App\Model\Message;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
-class MailjetEmailClient
+class SendGridEmailClient
 {
     private MessageMapper $messageMapper;
     private Client $client;
@@ -24,25 +24,25 @@ class MailjetEmailClient
     public function postMessage(Message $message)
     {
         try {
-            $response = $this->client->post('https://api.mailjet.com/v3.1/send',
+            $response = $this->client->post('https://api.sendgrid.com/v3/mail/send',
                 $this->buildRequestOptions($message));
 
-            $mailjetResponse = json_decode($response->getBody()->getContents(), true);
+            $sendgridResponse = json_decode($response->getBody()->getContents());
 
-            return $this->messageMapper->mapMailjetResponseToMessageResponse($mailjetResponse);
+            return $this->messageMapper->mapSendgridResponseToMessageResponse();
         } catch (GuzzleException $e) {
-            throw new MailjetNotAvailable("Mailjet not available");
+            throw new MailjetNotAvailable("Sendgrid not available");
         }
     }
 
     public function buildRequestOptions(Message $message): array {
         return [
-            'auth' => [
-                env('MAILJET_PUBLIC_KEY'),
-                env('MAILJET_PRIVATE_KEY')
+            'headers'  => [
+                'content-type' => 'application/json',
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . env('SENDGRID_API_KEY')
             ],
-            'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => json_encode($this->messageMapper->mapMessageToMailjetMessage($message)),
+            'body' => json_encode($this->messageMapper->mapMessageTosendgridMessage($message)),
             'debug' => false
         ];
     }

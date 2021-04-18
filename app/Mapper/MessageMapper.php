@@ -50,4 +50,38 @@ class MessageMapper
 
         return $responseBody;
     }
+
+    public function mapSendgridResponseToMessageResponse(): array
+    {
+        $status = 'success';
+        $messageId = 'sendgrid';
+        $responseBody = ['messageId' => "$messageId", 'status' => $status];
+
+        return $responseBody;
+    }
+
+    public function mapMessageToSendgridMessage(Message $message): array {
+        $sendgridMessage = [
+            'personalizations' => [
+                0 => [
+                    'to' => [
+                        0 => [
+                            'email' => $message->getTo()->getEmail(),
+                        ],
+                    ],
+                ],
+            ],
+            'from' => [
+                'email' => $message->getFrom()->getEmail(),
+            ],
+            'subject' => $message->getSubject(),
+            'content' => [
+                0 => [
+                    'type' => 'text/plain',
+                    'value' => $message->getMessage(),
+                ],
+            ],
+        ];
+        return $sendgridMessage;
+    }
 }

@@ -15,7 +15,7 @@ class MessageService
         $this->postEmailService = $postEmailService;
     }
 
-    public function sendEmail($message): StreamInterface
+    public function sendEmail($message)
     {
         return $this->postEmailService->post($message);
     }

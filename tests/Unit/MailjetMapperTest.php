@@ -65,4 +65,20 @@ class MessageMapperTest extends TestCase
 
         $this->assertEquals($expectedMessage, $actualMessage);
     }
+
+    public function testShouldMapFromMailjetMessageToMessageResponse() {
+        $messageMapper = new MessageMapper();
+        $mailjetResponseAsString = $this->buildMailjetResponseBody();
+        $externalServiceResponse = json_decode($mailjetResponseAsString,true);
+        $expectedMessageResponse = ['messageId' => '1152921511742440156', 'status' => 'success'];
+
+        $actualMessageResponse = $messageMapper->mapMailjetResponseToMessageResponse($externalServiceResponse);
+
+        $this->assertEquals($actualMessageResponse, $expectedMessageResponse);
+    }
+
+
+    private function buildMailjetResponseBody(): string {
+        return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';
+    }
 }

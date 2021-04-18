@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Client\GenericClient;
+use App\Mapper\MessageMapper;
 
 class MessageService
 {

@@ -47,4 +47,13 @@ class MessageMapper
 
         return $message;
     }
+
+    public function mapMailjetResponseToMessageResponse($externalServiceResponse)
+    {
+        $status = $externalServiceResponse['Messages'][0]['Status'];
+        $messageId = $externalServiceResponse['Messages'][0]['To'][0]['MessageID'];
+        $responseBody = ['messageId' => "$messageId", 'status' => $status];
+
+        return $responseBody;
+    }
 }

@@ -2,8 +2,8 @@
 
 namespace Tests\Integration;
 
-use App\Adapter\MailjetEmailClient;
-use App\Client\PostEmailService;
+use App\Client\MailjetEmailClient;
+use App\Service\PostEmailService;
 use App\Http\Controllers\Message\MessageController;
 use App\Mapper\MessageMapper;
 use App\Service\MessageService;

@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Client;
+namespace App\Service;
 
-use App\Adapter\MailjetEmailClient;
+use App\Client\MailjetEmailClient;
 use App\Model\Message;
-use GuzzleHttp\Client;
-use Psr\Http\Message\StreamInterface;
 
 class PostEmailService
 {
@@ -16,7 +14,7 @@ class PostEmailService
         $this->client = $mailjetClient;
     }
 
-    public function post(Message $message): StreamInterface
+    public function post(Message $message)
     {
         return $this->client->postMessage($message);
     }

@@ -2,9 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Client\PostEmailService;
 use App\Mapper\MessageMapper;
-use App\Adapter\MailjetEmailClient;
+use App\Client\MailjetEmailClient;
 use App\Model\From;
 use App\Model\Message;
 use App\Model\To;

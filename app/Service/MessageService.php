@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Client\PostEmailService;
+use App\Service\PostEmailService;
 use Psr\Http\Message\StreamInterface;
 
 class MessageService

@@ -1,12 +1,14 @@
 <?php
 
 
-namespace App\Adapter;
+namespace App\Client;
 
 
+use App\Exceptions\EmailProviderNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 class MailjetEmailClient
 {
@@ -21,10 +23,14 @@ class MailjetEmailClient
 
     public function postMessage(Message $message)
     {
-        $response = $this->client->post(env('MAILJET_MESSAGE_URL'),
-            $this->buildRequestOptions($message));
+        try {
+            $response = $this->client->post(env('MAILJET_MESSAGE_URL'),
+                $this->buildRequestOptions($message));
 
-        return $response->getBody();
+            return $response->getBody();
+        } catch (GuzzleException $e) {
+            throw new EmailProviderNotAvailableException("Mailjet not available");
+        }
     }
 
     public function buildRequestOptions(Message $message): array {

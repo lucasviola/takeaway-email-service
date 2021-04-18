@@ -8,15 +8,15 @@ use Psr\Http\Message\StreamInterface;
 class MessageService
 {
 
-    private PostEmailService $client;
+    private PostEmailService $postEmailService;
 
-    public function __construct(PostEmailService $client)
+    public function __construct(PostEmailService $postEmailService)
     {
-        $this->client = $client;
+        $this->postEmailService = $postEmailService;
     }
 
     public function sendEmail($message): StreamInterface
     {
-        return $this->client->post($message);
+        return $this->postEmailService->post($message);
     }
 }

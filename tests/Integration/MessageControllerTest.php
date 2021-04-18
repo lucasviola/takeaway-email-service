@@ -24,7 +24,7 @@ class MessageControllerTest extends TestCase
         ]);
         $handlerStack = HandlerStack::create($client);
         $mockHttpClient = new Client(['handler' => $handlerStack]);
-        $client = new PostEmailService($mockHttpClient, new MailjetEmailClient($mapper));
+        $client = new PostEmailService(new MailjetEmailClient($mapper, $mockHttpClient));
         $service = new MessageService($client);
         $controller = new MessageController($service, $mapper);
         $request = new Request([], [], [], [], [], [], $this->buildRequestBody());

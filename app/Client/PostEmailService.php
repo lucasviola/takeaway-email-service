@@ -9,21 +9,15 @@ use Psr\Http\Message\StreamInterface;
 
 class PostEmailService
 {
-    private Client $client;
-    private MailjetEmailClient $adapter;
+    private MailjetEmailClient $client;
 
-    public function __construct(Client $client, MailjetEmailClient $adapter)
+    public function __construct(MailjetEmailClient $mailjetClient)
     {
-        $this->client = $client;
-        $this->adapter = $adapter;
+        $this->client = $mailjetClient;
     }
 
-    public function post(Message $message)
+    public function post(Message $message): StreamInterface
     {
-
-        $response = $this->client->post($this->adapter->getUrl(),
-            $this->adapter->buildRequestOptions($message));
-
-        return $response->getBody();
+        return $this->client->postMessage($message);
     }
 }

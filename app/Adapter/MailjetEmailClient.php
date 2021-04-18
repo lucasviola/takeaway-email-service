@@ -6,22 +6,27 @@ namespace App\Adapter;
 
 use App\Mapper\MessageMapper;
 use App\Model\Message;
+use GuzzleHttp\Client;
 
 class MailjetEmailClient
 {
     private MessageMapper $messageMapper;
-    private $url;
+    private Client $client;
 
-    public function __construct(MessageMapper $messageMapper)
+    public function __construct(MessageMapper $messageMapper, Client $client)
     {
-        $this->url = env('MAILJET_MESSAGE_URL');
         $this->messageMapper = $messageMapper;
+        $this->client = $client;
     }
 
-    public function getUrl()
+    public function postMessage(Message $message)
     {
-        return $this->url;
+        $response = $this->client->post(env('MAILJET_MESSAGE_URL'),
+            $this->buildRequestOptions($message));
+
+        return $response->getBody();
     }
+
     public function buildRequestOptions(Message $message): array {
         return [
             'auth' => [

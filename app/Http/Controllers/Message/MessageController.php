@@ -26,6 +26,6 @@ class MessageController extends Controller
 
         $this->service->sendEmail($message);
 
-        return response()->json([], 202);
+        return response()->json(['messageStatus' => 'queued'], 202);
     }
 }

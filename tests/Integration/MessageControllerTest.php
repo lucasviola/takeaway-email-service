@@ -65,6 +65,6 @@ class MessageControllerTest extends TestCase
 
     private function buildResponse(): string
     {
-        return '{"messageId":"1152921511742440156","status":"success"}';
+        return '{"messageStatus":"queued"}';
     }
 }

@@ -13,7 +13,8 @@
         "guzzlehttp/guzzle": "^7.0",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
-        "php-amqplib/php-amqplib": "^3.0"
+        "php-amqplib/php-amqplib": "^3.0",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

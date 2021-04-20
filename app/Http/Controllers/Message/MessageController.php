@@ -30,4 +30,11 @@ class MessageController extends Controller
         $response = ['messageId' => $messageId,'messageStatus' => 'Queued'];
         return response()->json($response, 202);
     }
+
+    public function findAll(): JsonResponse
+    {
+        $response = $this->service->findAllMessages();
+
+        return response()->json($response, 202);
+    }
 }

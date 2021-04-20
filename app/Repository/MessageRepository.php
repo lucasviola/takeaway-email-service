@@ -15,11 +15,15 @@ class MessageRepository
         $this->messageMapper = $messageMapper;
     }
 
-    public function saveMessage(Message $message) {
+    public function saveMessage(Message $message): void {
 
         $attributes = $this->messageMapper->mapMessageToMessageEntity($message);
         $messageEntity = new MessageEntity($attributes);
 
         $messageEntity->save();
+    }
+
+    public function findAll() {
+        return MessageEntity::all();
     }
 }

@@ -26,4 +26,9 @@ class MessageService
         $this->postEmailService->post($message);
         $this->messageRepository->saveMessage($message);
     }
+
+    public function findAllMessages()
+    {
+        return $this->messageRepository->findAll();
+    }
 }

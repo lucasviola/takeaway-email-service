@@ -2,7 +2,9 @@
 
 namespace App\Service;
 
-use App\Message;
+use App\Mapper\MessageMapper;
+use App\MessageEntity;
+use App\Model\Message;
 use Exception;
 
 class MessageService
@@ -18,12 +20,21 @@ class MessageService
         $this->queueEmailService = $queueEmailService;
     }
 
-    public function sendEmail($message): void
+    public function sendEmail(Message $message): void
     {
 //        $this->queueEmailService->publish($message);
 
-        $messageToBeSaved = new Message('lucas@email.com', 'takemeawaytotakeaway@netherlands.com',
-            'subject', 'message');
+        $mapper = new MessageMapper();
+        $json = $mapper->mapMessageToJson($message);
+
+        $attributes = [
+            'from' => $json['from']['email'],
+            'messageId' => uniqid(),
+            'to' => $json['to']['email'],
+            'subject' => $json['subject'],
+            'message' => $json['message']
+        ];
+        $messageToBeSaved = new MessageEntity($attributes);
 
         try {
             $messageToBeSaved->save();

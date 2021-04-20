@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Service;
+namespace Tests\Unit;
 
 use App\Client\MailjetEmailClient;
 use App\Client\SendGridEmailClient;

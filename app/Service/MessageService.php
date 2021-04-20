@@ -29,9 +29,8 @@ class MessageService
             $messageToBeSaved->save();
         } catch (Exception $e) {
             var_dump($e->getMessage());
-            var_dump($e->getFile());
         }
 
-        $this->postEmailService->post($message);
+//        $this->postEmailService->post($message);
     }
 }

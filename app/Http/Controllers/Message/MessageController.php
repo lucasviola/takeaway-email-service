@@ -22,10 +22,12 @@ class MessageController extends Controller
     public function send(Request $request): JsonResponse
     {
         $requestBody = json_decode($request->getContent(), true);
-        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody);
+        $messageId = uniqid();
+        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId);
 
         $this->service->sendEmail($message);
 
-        return response()->json(['messageStatus' => 'queued'], 202);
+        $response = ['messageId' => $messageId,'messageStatus' => 'Queued'];
+        return response()->json($response, 202);
     }
 }

@@ -20,7 +20,8 @@ use PHPUnit\Framework\TestCase;
 class PostEmailServiceTest extends TestCase
 {
     public function testShouldUseSendGridAsFallBackWhenMailServiceIsNotAvailable() {
-        $message = new Message(new From('name', 'email'),
+        $messageId = uniqid();
+        $message = new Message($messageId, new From('name', 'email'),
             new To('name', 'email'), 'Test', 'Test');
         $badMailjetClient = $this->mockMailjetClient();
         $goodSendGridClient = $this->mockSendGridClient();

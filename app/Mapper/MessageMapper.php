@@ -26,18 +26,18 @@ class MessageMapper
                     ],
                     'Subject' => $message->getSubject(),
                     'TextPart' => $message->getMessage(),
-                    'CustomID' => "developmentTest"
+                    'CustomID' => $message->getMessageId()
                 ]
             ]
         ];
         return $mailjetMessage;
     }
 
-    public function mapMessageRequestToDomainModel(array $requestBodyAsJson): Message
+    public function mapMessageRequestToDomainModel(array $requestBodyAsJson, string $messageId): Message
     {
         $to = new To($requestBodyAsJson['to']['name'], $requestBodyAsJson['to']['email']);
         $from = new From($requestBodyAsJson['from']['name'], $requestBodyAsJson['from']['email']);
-        $message = new Message($from, $to, $requestBodyAsJson['subject'], $requestBodyAsJson['message']);
+        $message = new Message($messageId, $from, $to, $requestBodyAsJson['subject'], $requestBodyAsJson['message']);
 
         return $message;
     }
@@ -98,6 +98,17 @@ class MessageMapper
             ],
             'subject' => $message->getSubject(),
             'message' => $message->getMessage(),
+        ];
+    }
+
+    public function mapMessageToMessageEntity(Message $message): array
+    {
+        return [
+            'from' => $message->getFrom()->getEmail(),
+            'messageId' => $message->getMessageId(),
+            'to' => $message->getTo()->getEmail(),
+            'subject' => $message->getSubject(),
+            'message' => $message->getMessage()
         ];
     }
 }

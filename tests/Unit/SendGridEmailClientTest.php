@@ -25,7 +25,8 @@ class SendGridEmailClientTest extends TestCase
     protected function setUp(): void
     {
         $this->mapper = new MessageMapper();
-        $this->message = new Message(new From('name', 'email'),
+        $messageId = uniqid();
+        $this->message = new Message($messageId, new From('name', 'email'),
             new To('name', 'email'), 'Test', 'Test');
         $client = new MockHandler([
             new Response(200, ['content-type' => 'application/json']),

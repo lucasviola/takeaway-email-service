@@ -39,8 +39,9 @@ class MessageControllerTest extends TestCase
         $service = new MessageService($client, $queueEmailservice, $messageRepository);
         $controller = new MessageController($service, $mapper);
         $request = new Request([], [], [], [], [], [], $this->buildRequestBody());
+
         $actualResponse = $controller->send($request);
-//
+
         $this->assertEquals(202, $actualResponse->getStatusCode());
         $this->assertEquals($this->buildResponse(), $actualResponse->getContent());
     }

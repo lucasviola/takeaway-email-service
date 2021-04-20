@@ -23,14 +23,15 @@ class MessageMapperTest extends TestCase
                             "name": "name",
                             "email": "email"
                           },
-                          "subject": "subject",
-                          "message": "message"
+                          "subject": "Test",
+                          "message": "Test"
                         }';
     }
 
     public function testShouldTransformMessageDomainIntoMailjetMessage() {
         $messageMapper = new MessageMapper();
-        $message = new Message(new From('name', 'email'),
+        $messageId = uniqid();
+        $message = new Message($messageId, new From('name', 'email'),
             new To('name', 'email'), 'Test', 'Test');
         $expectedMailjetMessage = [
             'Messages' => [
@@ -47,7 +48,7 @@ class MessageMapperTest extends TestCase
                     ],
                     'Subject' => $message->getSubject(),
                     'TextPart' => $message->getMessage(),
-                    'CustomID' => "developmentTest"
+                    'CustomID' => $message->getMessageId()
                 ]
             ]
         ];
@@ -58,14 +59,14 @@ class MessageMapperTest extends TestCase
     }
 
     public function testShouldTransformRequestBodyIntoMessageDomainModel() {
-        $to = new To('name', 'email');
-        $from = new From('name', 'email');
-        $expectedMessage = new Message($from, $to, 'subject', 'message');
+        $messageId = uniqid();
+        $expectedMessage = new Message($messageId, new From('name', 'email'),
+            new To('name', 'email'), 'Test', 'Test');
         $messageMapper = new MessageMapper();
         $requestBody = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
             $this->messageRequest), true);
 
-        $actualMessage = $messageMapper->mapMessageRequestToDomainModel($requestBody);
+        $actualMessage = $messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId);
 
         $this->assertEquals($expectedMessage, $actualMessage);
     }
@@ -83,7 +84,8 @@ class MessageMapperTest extends TestCase
 
     public function testShouldMapFromMessageToSendgridMessage() {
         $messageMapper = new MessageMapper();
-        $message = new Message(new From('name', 'email'),
+        $messageId = uniqid();
+        $message = new Message($messageId, new From('name', 'email'),
             new To('name', 'email'), 'Test', 'Test');
         $expectedSendgridMessage = [
             'personalizations' => [
@@ -114,7 +116,8 @@ class MessageMapperTest extends TestCase
 
     public function testShouldMapMessageToString() {
         $mapper = new MessageMapper();
-        $message = new Message(new From('name', 'email'),
+        $messageId = uniqid();
+        $message = new Message($messageId, new From('name', 'email'),
             new To('name', 'email'), 'Test', 'Test');
         $expected = [
             'from' => [
@@ -134,6 +137,23 @@ class MessageMapperTest extends TestCase
         $this->assertEquals($actual, $expected);
     }
 
+    public function testShouldMapFromMessageToMessageEntity() {
+        $mapper = new MessageMapper();
+        $messageId = uniqid();
+        $message = new Message($messageId, new From('name', 'email'),
+            new To('name', 'email'), 'Test', 'Test');
+        $expected = [
+            'from' => $message->getFrom()->getEmail(),
+            'messageId' => $messageId,
+            'to' => $message->getTo()->getEmail(),
+            'subject' => $message->getSubject(),
+            'message' => $message->getMessage()
+        ];
+
+        $actual =  $mapper->mapMessageToMessageEntity($message);
+
+        $this->assertEquals($actual, $expected);
+    }
 
     private function buildMailjetResponseBody(): string {
         return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';

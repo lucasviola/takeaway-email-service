@@ -15,7 +15,8 @@ class QueueEmailServiceTest extends TestCase
 
     public function testShouldMapMessageToStringBeforeSendingIt()
     {
-        $message = new Message(new From('name', 'email'),
+        $messageId = uniqid();
+        $message = new Message($messageId, new From('name', 'email'),
             new To('name', 'email'), 'Test', 'Test');
         $expectedMessageAsString = $this->buildMessageRequest();
         $mapper = new MessageMapper();

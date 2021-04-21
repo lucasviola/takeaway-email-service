@@ -7,6 +7,7 @@ namespace App\Client;
 use App\Exceptions\SendGridNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
+use App\Model\MessageModel;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -21,7 +22,7 @@ class SendGridEmailClient
         $this->client = $client;
     }
 
-    public function postMessage(Message $message)
+    public function postMessage(MessageModel $message)
     {
         try {
             $response = $this->client->post('https://api.sendgrid.com/v3/mail/send',
@@ -35,7 +36,7 @@ class SendGridEmailClient
         }
     }
 
-    public function buildRequestOptions(Message $message): array {
+    public function buildRequestOptions(MessageModel $message): array {
         return [
             'headers'  => [
                 'content-type' => 'application/json',

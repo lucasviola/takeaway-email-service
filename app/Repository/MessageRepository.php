@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Mapper\MessageMapper;
 use App\MessageEntity;
 use App\Model\Message;
+use App\Model\MessageModel;
 
 class MessageRepository
 {
@@ -15,7 +16,7 @@ class MessageRepository
         $this->messageMapper = $messageMapper;
     }
 
-    public function saveMessage(Message $message): void {
+    public function saveMessage(MessageModel $message): void {
 
         $attributes = $this->messageMapper->mapMessageToMessageEntity($message);
         $messageEntity = new MessageEntity($attributes);

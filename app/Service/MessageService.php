@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Model\MessageModel;
 use App\Repository\MessageRepository;
 use App\Model\Message;
 
@@ -21,7 +22,7 @@ class MessageService
         $this->messageRepository = $messageRepository;
     }
 
-    public function sendEmail(Message $message): void
+    public function sendEmail(MessageModel $message): void
     {
         $this->postEmailService->post($message);
         $this->messageRepository->saveMessage($message);

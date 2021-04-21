@@ -7,6 +7,7 @@ use App\Mapper\MessageMapper;
 use App\Client\MailjetEmailClient;
 use App\Model\From;
 use App\Model\Message;
+use App\Model\MessageModel;
 use App\Model\To;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -20,7 +21,7 @@ class MailjetEmailClientTest extends TestCase
 {
     private MessageMapper $mapper;
     private MailjetEmailClient $mailjetEmailClient;
-    private Message $message;
+    private MessageModel $message;
     private Client $httpClient;
 
 
@@ -28,8 +29,7 @@ class MailjetEmailClientTest extends TestCase
     {
         $this->mapper = new MessageMapper();
         $messageId = uniqid();
-        $this->message = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $this->message = $this->buildMessage($messageId);
         $client = new MockHandler([
             new Response(200, ['content-type' => 'application/json'],
                 $this->buildMailjetResponseBody()),
@@ -78,5 +78,23 @@ class MailjetEmailClientTest extends TestCase
 
     private function buildMailjetResponseBody(): string {
         return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';
+    }
+
+    private function buildMessage($messageId): MessageModel
+    {
+        $attributes = [
+            'messageId' => $messageId,
+            'from' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'to' => [
+                'name' => 'name',
+                'email' => 'email',
+             ],
+            'subject' => 'subject',
+            'message' => 'message',
+        ];
+        return new MessageModel($attributes);
     }
 }

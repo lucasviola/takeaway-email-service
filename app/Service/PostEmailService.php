@@ -6,7 +6,6 @@ use App\Client\MailjetEmailClient;
 use App\Client\SendGridEmailClient;
 use App\Exceptions\MailjetNotAvailableException;
 use App\Model\Message;
-use App\Model\MessageModel;
 
 class PostEmailService
 {
@@ -19,7 +18,7 @@ class PostEmailService
         $this->sendGridEmailClient = $sendGridEmailClient;
     }
 
-    public function post(MessageModel $message): array
+    public function post(Message $message): array
     {
         try {
             return $this->mailjetClient->postMessage($message);

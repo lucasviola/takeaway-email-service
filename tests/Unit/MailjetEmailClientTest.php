@@ -5,10 +5,7 @@ namespace Tests\Unit;
 use App\Exceptions\MailjetNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Client\MailjetEmailClient;
-use App\Model\From;
 use App\Model\Message;
-use App\Model\MessageModel;
-use App\Model\To;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -21,7 +18,7 @@ class MailjetEmailClientTest extends TestCase
 {
     private MessageMapper $mapper;
     private MailjetEmailClient $mailjetEmailClient;
-    private MessageModel $message;
+    private Message $message;
     private Client $httpClient;
 
 
@@ -80,7 +77,7 @@ class MailjetEmailClientTest extends TestCase
         return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';
     }
 
-    private function buildMessage($messageId): MessageModel
+    private function buildMessage($messageId): Message
     {
         $attributes = [
             'messageId' => $messageId,
@@ -95,6 +92,6 @@ class MailjetEmailClientTest extends TestCase
             'subject' => 'subject',
             'message' => 'message',
         ];
-        return new MessageModel($attributes);
+        return new Message($attributes);
     }
 }

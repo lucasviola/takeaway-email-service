@@ -5,9 +5,7 @@ namespace Tests\Unit;
 use App\Client\MailjetEmailClient;
 use App\Client\SendGridEmailClient;
 use App\Mapper\MessageMapper;
-use App\Model\From;
 use App\Model\Message;
-use App\Model\To;
 use App\Service\PostEmailService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -21,8 +19,7 @@ class PostEmailServiceTest extends TestCase
 {
     public function testShouldUseSendGridAsFallBackWhenMailServiceIsNotAvailable() {
         $messageId = uniqid();
-        $message = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $message = $this->buildMessage($messageId);
         $badMailjetClient = $this->mockMailjetClient();
         $goodSendGridClient = $this->mockSendGridClient();
         $postEmailService = new PostEmailService($badMailjetClient, $goodSendGridClient);
@@ -52,5 +49,23 @@ class PostEmailServiceTest extends TestCase
         $handlerStack = HandlerStack::create($client);
         $this->httpClient = new Client(['handler' => $handlerStack]);
         return new MailjetEmailClient($mapper, $this->httpClient);
+    }
+
+    private function buildMessage($messageId): Message
+    {
+        $attributes = [
+            'messageId' => $messageId,
+            'from' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'to' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'subject' => 'subject',
+            'message' => 'message',
+        ];
+        return new Message($attributes);
     }
 }

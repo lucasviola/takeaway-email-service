@@ -5,9 +5,7 @@ namespace Tests\Unit;
 use App\Client\SendGridEmailClient;
 use App\Exceptions\SendGridNotAvailableException;
 use App\Mapper\MessageMapper;
-use App\Model\From;
 use App\Model\Message;
-use App\Model\To;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -26,8 +24,7 @@ class SendGridEmailClientTest extends TestCase
     {
         $this->mapper = new MessageMapper();
         $messageId = uniqid();
-        $this->message = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $this->message = $this->buildMessage($messageId);
         $client = new MockHandler([
             new Response(200, ['content-type' => 'application/json']),
         ]);
@@ -73,5 +70,23 @@ class SendGridEmailClientTest extends TestCase
         $this->expectException(SendGridNotAvailableException::class);
 
         $badSendGridClient->postMessage($this->message);
+    }
+
+    private function buildMessage($messageId): Message
+    {
+        $attributes = [
+            'messageId' => $messageId,
+            'from' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'to' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'subject' => 'subject',
+            'message' => 'message',
+        ];
+        return new Message($attributes);
     }
 }

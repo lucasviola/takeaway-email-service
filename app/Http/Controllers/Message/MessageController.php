@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Message;
 
 use App\Http\Controllers\Controller;
 use App\Mapper\MessageMapper;
-use App\Model\MessageModel;
 use App\Service\MessageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

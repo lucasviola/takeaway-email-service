@@ -33,7 +33,9 @@ class MessageMapper
         return $mailjetMessage;
     }
 
-    public function mapMessageRequestToDomainModel(array $requestBodyAsJson, string $messageId): Message
+    public function mapMessageRequestToDomainModel(array $requestBodyAsJson,
+                                                   string $messageId,
+                                                   string $status): Message
     {
         $attributes = [
             'messageId' => $messageId,
@@ -47,6 +49,7 @@ class MessageMapper
             ],
             'subject' => $requestBodyAsJson['subject'],
             'message' => $requestBodyAsJson['message'],
+            'status' => $status
         ];
 
         return new Message($attributes);
@@ -118,7 +121,8 @@ class MessageMapper
             'messageId' => $message->getAttributes()['messageId'],
             'to' => $message->getAttributes()['to']['email'],
             'subject' => $message->getAttributes()['subject'],
-            'message' => $message->getAttributes()['message']
+            'message' => $message->getAttributes()['message'],
+            'status' => $message->getAttributes()['status'],
         ];
     }
 }

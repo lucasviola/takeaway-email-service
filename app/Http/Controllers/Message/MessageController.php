@@ -23,7 +23,8 @@ class MessageController extends Controller
     {
         $requestBody = json_decode($request->getContent(), true);
         $messageId = uniqid();
-        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId);
+        $status = 'Queued';
+        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId, $status);
 
         $this->service->sendEmail($message);
 

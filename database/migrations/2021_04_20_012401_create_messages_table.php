@@ -20,6 +20,7 @@ class CreateMessagesTable extends Migration
             $table->string('from');
             $table->string('subject');
             $table->string('message');
+            $table->string('status');
             $table->timestamps();
         });
     }

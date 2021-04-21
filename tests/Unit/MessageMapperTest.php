@@ -61,8 +61,9 @@ class MessageMapperTest extends TestCase
         $messageMapper = new MessageMapper();
         $requestBody = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
             $this->messageRequest), true);
+        $status = 'status';
 
-        $actualMessage = $messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId);
+        $actualMessage = $messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId, $status);
 
         $this->assertEquals($expectedMessage, $actualMessage);
     }
@@ -140,7 +141,8 @@ class MessageMapperTest extends TestCase
             'messageId' => $message->getAttributes()['messageId'],
             'to' => $message->getAttributes()['to']['email'],
             'subject' => $message->getAttributes()['subject'],
-            'message' => $message->getAttributes()['message']
+            'message' => $message->getAttributes()['message'],
+            'status' => $message->getAttributes()['status']
         ];
 
         $actual =  $mapper->mapMessageToMessageEntity($message);
@@ -166,6 +168,7 @@ class MessageMapperTest extends TestCase
             ],
             'subject' => 'subject',
             'message' => 'message',
+            'status' => 'status'
         ];
         return new Message($attributes);
     }

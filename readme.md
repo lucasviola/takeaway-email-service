@@ -26,8 +26,8 @@ docker compose exec php artisan migrate
 Or if you have make installed you can run
 ```shell
 $ make build
-$ make run
-$ make configure
+$ make start
+$ make migrate
 ```
 
 ## Other useful make commands

@@ -4,10 +4,10 @@ DB_NAME=db
 build:
 	docker compose build --no-cache $(APP_NAME)
 
-run:
+start:
 	docker compose up -d
 
-configure:
+migrate:
 	docker compose exec $(APP_NAME) php artisan migrate
 
 shell-app:

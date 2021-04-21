@@ -4,6 +4,7 @@
 namespace App\Mapper;
 
 
+use App\MessageEntity;
 use App\Model\From;
 use App\Model\Message;
 use App\Model\To;
@@ -114,9 +115,9 @@ class MessageMapper
         ];
     }
 
-    public function mapMessageToMessageEntity(Message $message): array
+    public function mapMessageToMessageEntity(Message $message): MessageEntity
     {
-        return [
+        $attributes = [
             'from' => $message->getAttributes()['from']['email'],
             'messageId' => $message->getAttributes()['messageId'],
             'to' => $message->getAttributes()['to']['email'],
@@ -124,5 +125,7 @@ class MessageMapper
             'message' => $message->getAttributes()['message'],
             'status' => $message->getAttributes()['status'],
         ];
+
+        return new MessageEntity($attributes);
     }
 }

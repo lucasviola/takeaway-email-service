@@ -15,11 +15,7 @@ class MessageRepository
         $this->messageMapper = $messageMapper;
     }
 
-    public function saveMessage(Message $message): void {
-
-        $attributes = $this->messageMapper->mapMessageToMessageEntity($message);
-        $messageEntity = new MessageEntity($attributes);
-
+    public function saveMessage(MessageEntity $messageEntity): void {
         $messageEntity->save();
     }
 

@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Mapper\MessageMapper;
+use App\MessageEntity;
 use App\Model\Message;
 use PHPUnit\Framework\TestCase;
 
@@ -136,7 +137,7 @@ class MessageMapperTest extends TestCase
         $mapper = new MessageMapper();
         $messageId = uniqid();
         $message = $this->buildMessage($messageId);
-        $expected = [
+        $attributes = [
             'from' => $message->getAttributes()['from']['email'],
             'messageId' => $message->getAttributes()['messageId'],
             'to' => $message->getAttributes()['to']['email'],
@@ -144,6 +145,7 @@ class MessageMapperTest extends TestCase
             'message' => $message->getAttributes()['message'],
             'status' => $message->getAttributes()['status']
         ];
+        $expected = new MessageEntity($attributes);
 
         $actual =  $mapper->mapMessageToMessageEntity($message);
 

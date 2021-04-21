@@ -11,10 +11,4 @@ class MessageEntityTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    public function testMessageHasExpectedColumns() {
-        $this->assertTrue(
-            Schema::hasColumns('messages', [
-                'id','messageId', 'from', 'to', 'subject', 'message'
-            ]));
-    }
 }

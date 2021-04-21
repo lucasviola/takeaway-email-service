@@ -4,43 +4,16 @@ namespace App\Model;
 
 class Message
 {
-    private From $from;
-    private To $to;
-    private string $messageId;
-    private String $subject;
-    private String $message;
+    private $attributes;
 
-    public function __construct(string $messageId, From $from, To $to, String $subject, String $message)
+    public function __construct(array $attributes)
     {
-        $this->messageId = $messageId;
-        $this->from = $from;
-        $this->to = $to;
-        $this->subject = $subject;
-        $this->message = $message;
+        $this->attributes = $attributes;
     }
 
-    public function getMessageId(): string
+    public function getAttributes(): array
     {
-        return $this->messageId;
+        return $this->attributes;
     }
 
-    public function getFrom(): From
-    {
-        return $this->from;
-    }
-
-    public function getMessage(): string
-    {
-        return $this->message;
-    }
-
-    public function getSubject(): string
-    {
-        return $this->subject;
-    }
-
-    public function getTo(): To
-    {
-        return $this->to;
-    }
 }

@@ -3,9 +3,7 @@
 namespace Tests\Unit;
 
 use App\Mapper\MessageMapper;
-use App\Model\From;
 use App\Model\Message;
-use App\Model\To;
 use PHPUnit\Framework\TestCase;
 
 class MessageMapperTest extends TestCase
@@ -23,32 +21,31 @@ class MessageMapperTest extends TestCase
                             "name": "name",
                             "email": "email"
                           },
-                          "subject": "Test",
-                          "message": "Test"
+                          "subject": "subject",
+                          "message": "message"
                         }';
     }
 
     public function testShouldTransformMessageDomainIntoMailjetMessage() {
         $messageMapper = new MessageMapper();
         $messageId = uniqid();
-        $message = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $message = $this->buildMessage($messageId);
         $expectedMailjetMessage = [
             'Messages' => [
                 [
                     'From' => [
-                        'Email' => $message->getFrom()->getEmail(),
-                        'Name' => $message->getFrom()->getName()
+                        'Email' => $message->getAttributes()['from']['email'],
+                        'Name' =>  $message->getAttributes()['from']['name']
                     ],
                     'To' => [
                         [
-                            'Email' => $message->getTo()->getEmail(),
-                            'Name' => $message->getTo()->getName()
+                            'Email' => $message->getAttributes()['to']['email'],
+                            'Name' =>  $message->getAttributes()['to']['name']
                         ]
                     ],
-                    'Subject' => $message->getSubject(),
-                    'TextPart' => $message->getMessage(),
-                    'CustomID' => $message->getMessageId()
+                    'Subject' => $message->getAttributes()['subject'],
+                    'TextPart' => $message->getAttributes()['message'],
+                    'CustomID' => $message->getAttributes()['messageId']
                 ]
             ]
         ];
@@ -60,8 +57,7 @@ class MessageMapperTest extends TestCase
 
     public function testShouldTransformRequestBodyIntoMessageDomainModel() {
         $messageId = uniqid();
-        $expectedMessage = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $expectedMessage = $this->buildMessage($messageId);
         $messageMapper = new MessageMapper();
         $requestBody = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '',
             $this->messageRequest), true);
@@ -85,26 +81,25 @@ class MessageMapperTest extends TestCase
     public function testShouldMapFromMessageToSendgridMessage() {
         $messageMapper = new MessageMapper();
         $messageId = uniqid();
-        $message = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $message = $this->buildMessage($messageId);
         $expectedSendgridMessage = [
             'personalizations' => [
                 0 => [
                     'to' => [
                         0 => [
-                            'email' => $message->getTo()->getEmail(),
+                            'email' => $message->getAttributes()['to']['email'],
                         ],
                     ],
                 ],
             ],
             'from' => [
-                'email' => $message->getFrom()->getEmail(),
+                'email' => $message->getAttributes()['from']['email'],
             ],
-            'subject' => $message->getSubject(),
+            'subject' => $message->getAttributes()['subject'],
             'content' => [
                 0 => [
                     'type' => 'text/plain',
-                    'value' => $message->getMessage(),
+                    'value' => $message->getAttributes()['message'],
                 ],
             ],
         ];
@@ -117,19 +112,18 @@ class MessageMapperTest extends TestCase
     public function testShouldMapMessageToString() {
         $mapper = new MessageMapper();
         $messageId = uniqid();
-        $message = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $message = $this->buildMessage($messageId);
         $expected = [
             'from' => [
-                'name' => $message->getFrom()->getName(),
-                'email' => $message->getFrom()->getEmail(),
+                'name' => $message->getAttributes()['from']['name'],
+                'email' => $message->getAttributes()['from']['email'],
             ],
             'to' => [
-                'name' => $message->getTo()->getName(),
-                'email' => $message->getTo()->getEmail(),
+                'name' => $message->getAttributes()['to']['name'],
+                'email' => $message->getAttributes()['to']['email'],
             ],
-            'subject' => $message->getSubject(),
-            'message' => $message->getMessage(),
+            'subject' => $message->getAttributes()['subject'],
+            'message' => $message->getAttributes()['message'],
         ];
 
         $actual =  $mapper->mapMessageToJson($message);
@@ -140,14 +134,13 @@ class MessageMapperTest extends TestCase
     public function testShouldMapFromMessageToMessageEntity() {
         $mapper = new MessageMapper();
         $messageId = uniqid();
-        $message = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $message = $this->buildMessage($messageId);
         $expected = [
-            'from' => $message->getFrom()->getEmail(),
-            'messageId' => $messageId,
-            'to' => $message->getTo()->getEmail(),
-            'subject' => $message->getSubject(),
-            'message' => $message->getMessage()
+            'from' => $message->getAttributes()['from']['email'],
+            'messageId' => $message->getAttributes()['messageId'],
+            'to' => $message->getAttributes()['to']['email'],
+            'subject' => $message->getAttributes()['subject'],
+            'message' => $message->getAttributes()['message']
         ];
 
         $actual =  $mapper->mapMessageToMessageEntity($message);
@@ -157,5 +150,23 @@ class MessageMapperTest extends TestCase
 
     private function buildMailjetResponseBody(): string {
         return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';
+    }
+
+    private function buildMessage($messageId): Message
+    {
+        $attributes = [
+            'messageId' => $messageId,
+            'from' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'to' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'subject' => 'subject',
+            'message' => 'message',
+        ];
+        return new Message($attributes);
     }
 }

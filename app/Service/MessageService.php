@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
-use App\Repository\MessageRepository;
 use App\Model\Message;
+use App\Repository\MessageRepository;
 
 class MessageService
 {

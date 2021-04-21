@@ -4,9 +4,7 @@ namespace Tests\Unit;
 
 use App\Client\RabbitMQClient;
 use App\Mapper\MessageMapper;
-use App\Model\From;
 use App\Model\Message;
-use App\Model\To;
 use App\Service\QueueEmailService;
 use PHPUnit\Framework\TestCase;
 
@@ -16,8 +14,7 @@ class QueueEmailServiceTest extends TestCase
     public function testShouldMapMessageToStringBeforeSendingIt()
     {
         $messageId = uniqid();
-        $message = new Message($messageId, new From('name', 'email'),
-            new To('name', 'email'), 'Test', 'Test');
+        $message = $this->buildMessage($messageId);
         $expectedMessageAsString = $this->buildMessageRequest();
         $mapper = new MessageMapper();
         $client = $this->getMockBuilder(RabbitMQClient::class)->getMock();
@@ -31,6 +28,24 @@ class QueueEmailServiceTest extends TestCase
     }
 
     private function buildMessageRequest() {
-        return '{"from":{"name":"name","email":"email"},"to":{"name":"name","email":"email"},"subject":"Test","message":"Test"}';
+        return '{"from":{"name":"name","email":"email"},"to":{"name":"name","email":"email"},"subject":"subject","message":"message"}';
+    }
+
+    private function buildMessage($messageId): Message
+    {
+        $attributes = [
+            'messageId' => $messageId,
+            'from' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'to' => [
+                'name' => 'name',
+                'email' => 'email',
+            ],
+            'subject' => 'subject',
+            'message' => 'message',
+        ];
+        return new Message($attributes);
     }
 }

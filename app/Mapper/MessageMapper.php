@@ -15,18 +15,18 @@ class MessageMapper
             'Messages' => [
                 [
                     'From' => [
-                        'Email' => $message->getFrom()->getEmail(),
-                        'Name' => $message->getFrom()->getName()
+                        'Email' => $message->getAttributes()['from']['email'],
+                        'Name' => $message->getAttributes()['from']['name']
                     ],
                     'To' => [
                         [
-                            'Email' => $message->getTo()->getEmail(),
-                            'Name' => $message->getTo()->getName()
+                            'Email' => $message->getAttributes()['to']['email'],
+                            'Name' => $message->getAttributes()['to']['name']
                         ]
                     ],
-                    'Subject' => $message->getSubject(),
-                    'TextPart' => $message->getMessage(),
-                    'CustomID' => $message->getMessageId()
+                    'Subject' => $message->getAttributes()['subject'],
+                    'TextPart' => $message->getAttributes()['message'],
+                    'CustomID' => $message->getAttributes()['messageId']
                 ]
             ]
         ];
@@ -35,11 +35,21 @@ class MessageMapper
 
     public function mapMessageRequestToDomainModel(array $requestBodyAsJson, string $messageId): Message
     {
-        $to = new To($requestBodyAsJson['to']['name'], $requestBodyAsJson['to']['email']);
-        $from = new From($requestBodyAsJson['from']['name'], $requestBodyAsJson['from']['email']);
-        $message = new Message($messageId, $from, $to, $requestBodyAsJson['subject'], $requestBodyAsJson['message']);
+        $attributes = [
+            'messageId' => $messageId,
+            'from' => [
+                'name' => $requestBodyAsJson['to']['name'],
+                'email' => $requestBodyAsJson['to']['email'],
+            ],
+            'to' => [
+                'name' => $requestBodyAsJson['from']['name'],
+                'email' => $requestBodyAsJson['from']['email'],
+            ],
+            'subject' => $requestBodyAsJson['subject'],
+            'message' => $requestBodyAsJson['message'],
+        ];
 
-        return $message;
+        return new Message($attributes);
     }
 
     public function mapMailjetResponseToMessageResponse(array $externalServiceResponse): array
@@ -66,19 +76,19 @@ class MessageMapper
                 0 => [
                     'to' => [
                         0 => [
-                            'email' => $message->getTo()->getEmail(),
+                            'email' => $message->getAttributes()['to']['email'],
                         ],
                     ],
                 ],
             ],
             'from' => [
-                'email' => $message->getFrom()->getEmail(),
+                'email' => $message->getAttributes()['from']['email'],
             ],
-            'subject' => $message->getSubject(),
+            'subject' => $message->getAttributes()['subject'],
             'content' => [
                 0 => [
                     'type' => 'text/plain',
-                    'value' => $message->getMessage(),
+                    'value' => $message->getAttributes()['message'],
                 ],
             ],
         ];
@@ -89,26 +99,26 @@ class MessageMapper
     {
         return [
             'from' => [
-                'name' => $message->getFrom()->getName(),
-                'email' => $message->getFrom()->getEmail(),
+                'name' => $message->getAttributes()['from']['name'],
+                'email' => $message->getAttributes()['from']['email'],
             ],
             'to' => [
-                'name' => $message->getTo()->getName(),
-                'email' => $message->getTo()->getEmail(),
+                'name' => $message->getAttributes()['to']['name'],
+                'email' => $message->getAttributes()['to']['email'],
             ],
-            'subject' => $message->getSubject(),
-            'message' => $message->getMessage(),
+            'subject' => $message->getAttributes()['subject'],
+            'message' => $message->getAttributes()['message'],
         ];
     }
 
     public function mapMessageToMessageEntity(Message $message): array
     {
         return [
-            'from' => $message->getFrom()->getEmail(),
-            'messageId' => $message->getMessageId(),
-            'to' => $message->getTo()->getEmail(),
-            'subject' => $message->getSubject(),
-            'message' => $message->getMessage()
+            'from' => $message->getAttributes()['from']['email'],
+            'messageId' => $message->getAttributes()['messageId'],
+            'to' => $message->getAttributes()['to']['email'],
+            'subject' => $message->getAttributes()['subject'],
+            'message' => $message->getAttributes()['message']
         ];
     }
 }

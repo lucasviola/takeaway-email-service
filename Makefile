@@ -16,6 +16,12 @@ shell-app:
 shell-db:
 	docker compose exec $(DB_NAME) /bin/bash
 
+install:
+	docker compose exec $(APP_NAME) composer install
+
+test:
+	php artisan test
+
 stop:
 	docker compose down
 

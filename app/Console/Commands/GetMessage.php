@@ -10,7 +10,6 @@ class GetMessage extends Command
     protected $signature = 'message:get';
     protected $description = 'Retrieve all the sent emails.';
 
-
     public function __construct()
     {
         parent::__construct();

@@ -1,7 +1,7 @@
 APP_NAME=app
 DB_NAME=db
 
-build: ## Build the release and develoment container. The development
+build:
 	docker compose build --no-cache $(APP_NAME)
 
 run:
@@ -18,4 +18,7 @@ shell-db:
 
 stop:
 	docker compose down
+
+get-messages:
+	docker compose exec $(APP_NAME) php artisan message:get
 

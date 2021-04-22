@@ -36,7 +36,7 @@ class PostEmailService
 
             return $messageSent;
         } catch (MailjetNotAvailableException $e) {
-            Log::warn('[PostEmailService@post] - Activating e-mail provider fallback');
+            Log::warning('[PostEmailService@post] - Activating e-mail provider fallback');
 
             $sendGridResponse = $this->sendGridEmailClient->postMessage($message);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Message;
 
 use App\Http\Controllers\Controller;
 use App\Http\MessageRequestValidator;
+use App\Jobs\SendEmailJob;
 use App\Mapper\MessageMapper;
 use App\Model\MessageStatus;
 use App\Service\MessageService;
@@ -42,15 +43,12 @@ class MessageController extends Controller
         }
 
         $messageId = uniqid();
-        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody, uniqid(),
+        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId,
             MessageStatus::POSTED);
 
-        $this->service->sendEmail($message);
+        SendEmailJob::dispatch($message);
 
-        $response = ['messageId' => $messageId,'messageStatus' => MessageStatus::POSTED];
-
-        Log::info('[MessageController@send] -
-        Request successful. Message ID:' . $messageId);
+        $response = ['messageId' => $messageId,'messageStatus' => MessageStatus::QUEUED];
 
         return response()->json($response, 202);
     }

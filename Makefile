@@ -28,3 +28,6 @@ stop:
 get-messages:
 	docker compose exec $(APP_NAME) php artisan message:get
 
+queue-work:
+	docker compose exec $(APP_NAME) php artisan queue:work
+

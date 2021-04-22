@@ -15,10 +15,16 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class PostEmailServiceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        Log::spy();
+    }
+
     public function testShouldUseSendGridAsFallBackWhenMailServiceIsNotAvailable() {
         $messageId = uniqid();
         $message = $this->buildMessage($messageId);

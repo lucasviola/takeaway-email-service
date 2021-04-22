@@ -11,6 +11,7 @@ use App\Model\Message;
 use App\Model\SendGridResponse;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Log;
 
 class SendGridEmailClient
 {
@@ -26,26 +27,31 @@ class SendGridEmailClient
     public function postMessage(Message $message): SendGridResponse
     {
         try {
+            $sendgridRequest = $this->messageMapper->mapMessageTosendgridMessage($message);
+
+            Log::info('[SendgridClient@postMessage] - Posting message to SendGrid. Payload: '
+                . JSONParser::parseToString($sendgridRequest));
+
             $response = $this->client->post('https://api.sendgrid.com/v3/mail/send',
-                $this->buildRequestOptions($message));
+                $this->buildRequestOptions($sendgridRequest));
 
-            $sendgridResponse =
-                new SendGridResponse(JSONParser::parseToJson($response->getBody()->getContents()));
-
-            return $sendgridResponse;
+            return new SendGridResponse(JSONParser::parseToJson($response->getBody()->getContents()));
         } catch (GuzzleException $e) {
+            Log::warning('[SendgridClient@postMessage] - Sendgrid failed. Reason: '
+                . $e->getMessage());
+
             throw new SendGridNotAvailableException("Sendgrid not available");
         }
     }
 
-    public function buildRequestOptions(Message $message): array {
+    public function buildRequestOptions(array $body): array {
         return [
             'headers'  => [
                 'content-type' => 'application/json',
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . env('SENDGRID_API_KEY')
             ],
-            'body' => JSONParser::parseToString($this->messageMapper->mapMessageTosendgridMessage($message)),
+            'body' => JSONParser::parseToString($body),
             'debug' => false
         ];
     }

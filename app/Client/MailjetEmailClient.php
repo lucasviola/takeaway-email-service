@@ -28,26 +28,31 @@ class MailjetEmailClient
     public function postMessage(Message $message): MailjetResponse
     {
         try {
-            $response = $this->client->post('https://api.mailjet.com/v3.1/send',
-                $this->buildRequestOptions($message));
+            $mailjetRequest = $this->messageMapper->mapMessageToMailjetMessage($message);
 
-            $mailjetResponse =
-                new MailjetResponse(JSONParser::parseToJson($response->getBody()->getContents()));
+            Log::info('[MailjetClient@postMessage] - Posting message to Mailjet. Payload: '
+                . JSONParser::parseToString($mailjetRequest));
 
-            return $mailjetResponse;
+            $mailjetResponse = $this->client->post('https://api.mailjet.com/v3.1/send',
+                $this->buildRequestOptions($mailjetRequest));
+
+            return new MailjetResponse(JSONParser::parseToJson($mailjetResponse->getBody()->getContents()));
         } catch (GuzzleException $e) {
+            Log::warning('[MailjetClient@postMessage] - Mailjet failed. Reason: '
+                . $e->getMessage());
+
             throw new MailjetNotAvailableException("Mailjet not available");
         }
     }
 
-    public function buildRequestOptions(Message $message): array {
+    public function buildRequestOptions(array $body): array {
         return [
             'auth' => [
                 env('MAILJET_PUBLIC_KEY'),
                 env('MAILJET_PRIVATE_KEY')
             ],
             'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => JSONParser::parseToString($this->messageMapper->mapMessageToMailjetMessage($message)),
+            'body' => JSONParser::parseToString($body),
             'debug' => false
         ];
     }

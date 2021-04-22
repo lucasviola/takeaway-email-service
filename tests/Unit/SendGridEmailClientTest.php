@@ -14,7 +14,8 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\Log;
+use Tests\TestCase;
 
 class SendGridEmailClientTest extends TestCase
 {
@@ -24,6 +25,7 @@ class SendGridEmailClientTest extends TestCase
 
     protected function setUp(): void
     {
+        Log::spy();
         $this->mapper = new MessageMapper();
         $messageId = uniqid();
         $this->message = $this->buildMessage($messageId);
@@ -45,6 +47,7 @@ class SendGridEmailClientTest extends TestCase
     }
 
     public function testShouldBuildRequestOptionsWithAuthorizationBearerAndMessagePayload() {
+        $sendGridRequestBody = $this->mapper->mapMessageToSendgridMessage($this->message);
         $expectedRequestOptions = [
             'headers'  => [
                 'content-type' => 'application/json',
@@ -55,7 +58,7 @@ class SendGridEmailClientTest extends TestCase
             'debug' => false
         ];
 
-        $actualRequestOptions = $this->sendGridEmailClient->buildRequestOptions($this->message);
+        $actualRequestOptions = $this->sendGridEmailClient->buildRequestOptions($sendGridRequestBody);
 
         $this->assertEquals($actualRequestOptions, $expectedRequestOptions);
     }

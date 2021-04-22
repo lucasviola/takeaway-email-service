@@ -7,6 +7,7 @@ namespace App\Model;
 abstract class MessageStatus
 {
     const SENT = 'SENT';
-    const FAILED = 'failed';
+    const FAILED = 'FAILED';
+    const POSTED = 'POSTED';
     const QUEUED = 'queued';
 }

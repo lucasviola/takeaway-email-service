@@ -16,10 +16,10 @@ class MessageRequestValidator
             [
                 'request.from' => 'required',
                 'request.from.name' => 'required',
-                'request.from.email' => 'required',
+                'request.from.email' => 'required|email:rfc',
                 'request.to' => 'required',
                 'request.to.name' => 'required',
-                'request.to.email' => 'required',
+                'request.to.email' => 'required|email:rfc',
                 'request.subject' => 'required',
                 'request.message' => 'required',
             ],

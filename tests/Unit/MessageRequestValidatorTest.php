@@ -11,11 +11,11 @@ class MessageRequestValidatorTest extends TestCase
         $request = [
             'from' => [
                 'name' => 'name',
-                'email' => 'email',
+                'email' => 'email@test.com',
             ],
             'to' => [
                 'name' => 'name',
-                'email' => 'email',
+                'email' => 'email@test.com',
             ],
             'subject' => 'subject',
             'message' => 'message'
@@ -30,8 +30,8 @@ class MessageRequestValidatorTest extends TestCase
     public function testShouldReturnTrueIfFromFieldIsMissing() {
         $request = [
             'to' => [
-                'name' => 'name',
-                'email' => 'email',
+                'name' => 'name@gmail',
+                'email' => 'email@gmail',
             ],
             'subject' => 'subject',
             'message' => 'message',
@@ -47,8 +47,8 @@ class MessageRequestValidatorTest extends TestCase
     public function testShouldReturnTrueIfToIsMissing() {
         $request = [
             'from' => [
-                'name' => 'email',
-                'email' => 'email',
+                'name' => 'email@test',
+                'email' => 'email@test',
             ],
             'subject' => 'subject',
             'message' => 'message',
@@ -64,11 +64,11 @@ class MessageRequestValidatorTest extends TestCase
         $request = [
             'from' => [
                 'name' => 'name',
-                'email' => 'email',
+                'email' => 'email@test.com',
             ],
             'to' => [
                 'name' => 'name',
-                'email' => 'email',
+                'email' => 'email@test.com',
             ],
             'message' => 'message',
         ];
@@ -83,14 +83,34 @@ class MessageRequestValidatorTest extends TestCase
         $request = [
             'from' => [
                 'name' => 'name',
-                'email' => 'email',
+                'email' => 'email@test.com',
+            ],
+            'to' => [
+                'name' => 'name',
+                'email' => 'email@test.com',
+            ],
+            'subject' => 'subject',
+        ];
+        $requestValidator = new MessageRequestValidator();
+
+        $actual = $requestValidator->hasErrors($request);
+
+        $this->assertTrue($actual);
+    }
+
+    public function testShouldReturnTrueIfEmailIsNotInTheCorrectFormat() {
+        $request = [
+            'from' => [
+                'name' => 'name',
+                'email' => 'email@test.com',
             ],
             'to' => [
                 'name' => 'name',
                 'email' => 'email',
             ],
             'subject' => 'subject',
-            'status' => 'status'
+            'status' => 'status',
+            'message' => 'message'
         ];
         $requestValidator = new MessageRequestValidator();
 

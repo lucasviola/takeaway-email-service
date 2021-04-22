@@ -10,7 +10,7 @@ use App\Model\Message;
 use App\Model\MessageSent;
 use App\Model\MessageStatus;
 use App\Model\SendGridResponse;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class MessageMapperTest extends TestCase
 {

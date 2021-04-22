@@ -14,7 +14,8 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\Log;
+use Tests\TestCase;
 
 class MailjetEmailClientTest extends TestCase
 {
@@ -26,6 +27,7 @@ class MailjetEmailClientTest extends TestCase
 
     protected function setUp(): void
     {
+        Log::spy();
         $this->mapper = new MessageMapper();
         $messageId = uniqid();
         $this->message = $this->buildMessage($messageId);
@@ -48,16 +50,18 @@ class MailjetEmailClientTest extends TestCase
     }
 
     public function testShouldBuildRequestOptionsFromMessage() {
+        $mailjetRequestBody = $this->mapper->mapMessageToMailjetMessage($this->message);
         $expectedRequestOptions = [
             'auth' => [
                 env('MAILJET_PUBLIC_KEY'),
                 env('MAILJET_PRIVATE_KEY')
             ],
             'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => JSONParser::parseToString($this->mapper->mapMessageToMailjetMessage($this->message)),
+            'body' => JSONParser::parseToString($mailjetRequestBody),
             'debug' => false
         ];
-        $actualRequestOptions = $this->mailjetEmailClient->buildRequestOptions($this->message);
+
+        $actualRequestOptions = $this->mailjetEmailClient->buildRequestOptions($mailjetRequestBody);
 
         $this->assertEquals($actualRequestOptions, $expectedRequestOptions);
     }

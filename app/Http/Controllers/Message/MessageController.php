@@ -5,39 +5,53 @@ namespace App\Http\Controllers\Message;
 use App\Http\Controllers\Controller;
 use App\Http\MessageRequestValidator;
 use App\Mapper\MessageMapper;
+use App\Model\MessageStatus;
 use App\Service\MessageService;
 use App\Utils\JSONParser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
 {
     private MessageService $service;
     private MessageMapper $messageMapper;
+    private MessageRequestValidator $requestValidator;
 
-    public function __construct(MessageService $service, MessageMapper $messageMapper)
+    public function __construct(MessageService $service, MessageMapper $messageMapper,
+                                MessageRequestValidator $messageRequestValidator)
     {
         $this->service = $service;
         $this->messageMapper = $messageMapper;
+        $this->requestValidator = $messageRequestValidator;
     }
 
     public function send(Request $request): JsonResponse
     {
-        $requestBody = JSONParser::parseToJson($request->getContent());
-        $requestValidator = new MessageRequestValidator();
+        Log::info('[MessageController@send] -
+        POST request received. Payload: ' . $request->getContent());
 
-        if ($requestValidator->hasErrors($requestBody)) {
-            return response()->json(['error' => $requestValidator->getErrors()],
+        $requestBody = JSONParser::parseToJson($request->getContent());
+
+        if ($this->requestValidator->hasErrors($requestBody)) {
+            Log::error('[MessageController@send] - Message contains validation errors: ' .
+                $this->requestValidator->getErrors());
+
+            return response()->json(['error' => $this->requestValidator->getErrors()],
                 400);
         }
 
         $messageId = uniqid();
-        $status = 'Posted';
-        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId, $status);
+        $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody, uniqid(),
+            MessageStatus::POSTED);
 
         $this->service->sendEmail($message);
 
-        $response = ['messageId' => $messageId,'messageStatus' => $status];
+        $response = ['messageId' => $messageId,'messageStatus' => MessageStatus::POSTED];
+
+        Log::info('[MessageController@send] -
+        Request successful. Message ID:' . $messageId);
+
         return response()->json($response, 202);
     }
 

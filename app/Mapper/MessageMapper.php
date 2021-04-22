@@ -101,22 +101,6 @@ class MessageMapper
         return $sendgridMessage;
     }
 
-    public function mapMessageToJson(Message $message): array
-    {
-        return [
-            'from' => [
-                'name' => $message->getAttributes()['from']['name'],
-                'email' => $message->getAttributes()['from']['email'],
-            ],
-            'to' => [
-                'name' => $message->getAttributes()['to']['name'],
-                'email' => $message->getAttributes()['to']['email'],
-            ],
-            'subject' => $message->getAttributes()['subject'],
-            'message' => $message->getAttributes()['message'],
-        ];
-    }
-
     public function mapMessageToMessageEntity(Message $message, MessageSent $messageSent): MessageEntity
     {
         $attributes = [

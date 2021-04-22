@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Message;
 
 use App\Http\Controllers\Controller;
-use App\Utils\JSONParser;
+use App\Http\MessageRequestValidator;
 use App\Mapper\MessageMapper;
 use App\Service\MessageService;
+use App\Utils\JSONParser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -23,14 +24,20 @@ class MessageController extends Controller
     public function send(Request $request): JsonResponse
     {
         $requestBody = JSONParser::parseToJson($request->getContent());
+        $requestValidator = new MessageRequestValidator();
+
+        if ($requestValidator->hasErrors($requestBody)) {
+            return response()->json(['error' => $requestValidator->getErrors()],
+                400);
+        }
 
         $messageId = uniqid();
-        $status = 'Queued';
+        $status = 'Posted';
         $message = $this->messageMapper->mapMessageRequestToDomainModel($requestBody, $messageId, $status);
 
         $this->service->sendEmail($message);
 
-        $response = ['messageId' => $messageId,'messageStatus' => 'Posted'];
+        $response = ['messageId' => $messageId,'messageStatus' => $status];
         return response()->json($response, 202);
     }
 

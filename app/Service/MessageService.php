@@ -10,17 +10,14 @@ class MessageService
 {
 
     private PostEmailService $postEmailService;
-    private QueueEmailService $queueEmailService;
     private MessageRepository $messageRepository;
     private MessageMapper $messageMapper;
 
     public function __construct(PostEmailService $postEmailService,
-                                QueueEmailService $queueEmailService,
                                 MessageRepository $messageRepository,
                                 MessageMapper $messageMapper)
     {
         $this->postEmailService = $postEmailService;
-        $this->queueEmailService = $queueEmailService;
         $this->messageRepository = $messageRepository;
         $this->messageMapper = $messageMapper;
     }

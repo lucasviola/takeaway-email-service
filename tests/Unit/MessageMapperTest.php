@@ -118,28 +118,6 @@ class MessageMapperTest extends TestCase
         $this->assertEquals($actualSendgridMessage, $expectedSendgridMessage);
     }
 
-    public function testShouldMapMessageToString() {
-        $mapper = new MessageMapper();
-        $messageId = uniqid();
-        $message = $this->buildMessage($messageId);
-        $expected = [
-            'from' => [
-                'name' => $message->getAttributes()['from']['name'],
-                'email' => $message->getAttributes()['from']['email'],
-            ],
-            'to' => [
-                'name' => $message->getAttributes()['to']['name'],
-                'email' => $message->getAttributes()['to']['email'],
-            ],
-            'subject' => $message->getAttributes()['subject'],
-            'message' => $message->getAttributes()['message'],
-        ];
-
-        $actual =  $mapper->mapMessageToJson($message);
-
-        $this->assertEquals($actual, $expected);
-    }
-
     public function testShouldMapFromMessageToMessageEntity() {
         $mapper = new MessageMapper();
         $messageId = uniqid();

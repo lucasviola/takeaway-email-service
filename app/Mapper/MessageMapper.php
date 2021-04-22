@@ -117,21 +117,21 @@ class MessageMapper
         ];
     }
 
-    public function mapMessageToMessageEntity(Message $message): MessageEntity
+    public function mapMessageToMessageEntity(Message $message, MessageSent $messageSent): MessageEntity
     {
         $attributes = [
             'from' => $message->getAttributes()['from']['email'],
-            'messageId' => $message->getAttributes()['messageId'],
+            'messageId' => $messageSent->getAttributes()['messageId'],
             'to' => $message->getAttributes()['to']['email'],
             'subject' => $message->getAttributes()['subject'],
             'message' => $message->getAttributes()['message'],
-            'status' => $message->getAttributes()['status'],
+            'status' => $messageSent->getAttributes()['status'],
         ];
 
         return new MessageEntity($attributes);
     }
 
-    public function mapFromSendgridResponseToMessageSent(SendGridResponse $sendGridResponse)
+    public function mapFromSendgridResponseToMessageSent(SendGridResponse $sendGridResponse): MessageSent
     {
         $attributes = [
             'messageId' => uniqid(),

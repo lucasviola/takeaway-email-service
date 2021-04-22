@@ -27,9 +27,9 @@ class MessageService
 
     public function sendEmail(Message $message): void
     {
-        $this->postEmailService->post($message);
+        $messageSent = $this->postEmailService->post($message);
 
-        $entity = $this->messageMapper->mapMessageToMessageEntity($message);
+        $entity = $this->messageMapper->mapMessageToMessageEntity($message, $messageSent);
         $this->messageRepository->saveMessage($entity);
     }
 

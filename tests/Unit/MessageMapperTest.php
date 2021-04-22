@@ -143,17 +143,21 @@ class MessageMapperTest extends TestCase
         $mapper = new MessageMapper();
         $messageId = uniqid();
         $message = $this->buildMessage($messageId);
+        $messageSent = new MessageSent([
+            'status' => 'success',
+            'messageId' => 'test'
+        ]);
         $attributes = [
             'from' => $message->getAttributes()['from']['email'],
-            'messageId' => $message->getAttributes()['messageId'],
+            'messageId' => $messageSent->getAttributes()['messageId'],
             'to' => $message->getAttributes()['to']['email'],
             'subject' => $message->getAttributes()['subject'],
             'message' => $message->getAttributes()['message'],
-            'status' => $message->getAttributes()['status']
+            'status' => $messageSent->getAttributes()['status']
         ];
         $expected = new MessageEntity($attributes);
 
-        $actual =  $mapper->mapMessageToMessageEntity($message);
+        $actual =  $mapper->mapMessageToMessageEntity($message, $messageSent);
 
         $this->assertEquals($actual, $expected);
     }

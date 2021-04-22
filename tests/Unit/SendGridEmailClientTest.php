@@ -6,6 +6,7 @@ use App\Client\SendGridEmailClient;
 use App\Exceptions\SendGridNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
+use App\Model\SendGridResponse;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -26,7 +27,7 @@ class SendGridEmailClientTest extends TestCase
         $messageId = uniqid();
         $this->message = $this->buildMessage($messageId);
         $client = new MockHandler([
-            new Response(200, ['content-type' => 'application/json']),
+            new Response(200, ['content-type' => 'application/json'], '[]'),
         ]);
         $handlerStack = HandlerStack::create($client);
         $mockHttpClient = new Client(['handler' => $handlerStack]);
@@ -34,7 +35,8 @@ class SendGridEmailClientTest extends TestCase
     }
 
     public function testWhenApiReturnsOkShouldMapResponseToDomainMessage() {
-        $expectedResponse = ['messageId' => 'sendgrid', 'status' => 'success'];
+        $expectedResponse =
+            new SendGridResponse([]);
 
         $actualResponse = $this->sendGridEmailClient->postMessage($this->message);
 

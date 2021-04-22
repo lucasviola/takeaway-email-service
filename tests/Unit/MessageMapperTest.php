@@ -4,12 +4,17 @@ namespace Tests\Unit;
 
 use App\Mapper\MessageMapper;
 use App\MessageEntity;
+use App\Model\MailjetResponse;
 use App\Model\Message;
+use App\Model\MessageSent;
+use App\Model\MessageStatus;
+use App\Model\SendGridResponse;
 use PHPUnit\Framework\TestCase;
 
 class MessageMapperTest extends TestCase
 {
     private string $messageRequest;
+    private MessageMapper $messageMapper;
 
     protected function setUp(): void
     {
@@ -25,6 +30,7 @@ class MessageMapperTest extends TestCase
                           "subject": "subject",
                           "message": "message"
                         }';
+        $this->messageMapper = new MessageMapper();
     }
 
     public function testShouldTransformMessageDomainIntoMailjetMessage() {
@@ -152,6 +158,28 @@ class MessageMapperTest extends TestCase
         $this->assertEquals($actual, $expected);
     }
 
+    public function testShouldMapFromSendGridResponseToMessageSent() {
+        $sendGridResponse = new SendGridResponse([]);
+
+        $actualMessageSent = $this->messageMapper->mapFromSendgridResponseToMessageSent($sendGridResponse);
+
+        $this->assertEquals($actualMessageSent->getAttributes()['status'], MessageStatus::SENT);
+        $this->assertNotNull($actualMessageSent->getAttributes()['messageId']);
+    }
+
+    public function testShouldMapFromMailjetResponseToMessageSent() {
+        $attributes = $this->buildMailjetResponse();
+        $mailjetResponse = new MailjetResponse($attributes);
+        $expectedMessageSent = new MessageSent([
+            'status' => 'success',
+            'messageId' => 'test'
+        ]);
+
+        $actualMessageSent = $this->messageMapper->mapFromMailjetResponseToMessageSent($mailjetResponse);
+
+        $this->assertEquals($actualMessageSent, $expectedMessageSent);
+    }
+
     private function buildMailjetResponseBody(): string {
         return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';
     }
@@ -173,5 +201,22 @@ class MessageMapperTest extends TestCase
             'status' => 'status'
         ];
         return new Message($attributes);
+    }
+
+    private function buildMailjetResponse()
+    {
+        return [
+            'Messages' => [
+                0 => [
+                    'Status' => 'success',
+                    'CustomID' => 'test',
+                    'To' => [
+                        0 => [
+                            'Email' => 'email@gmail.com',
+                            'MessageUUID' => 'uid',
+                            'MessageID' => 1152921511802880648,
+                            'MessageHref' => 'http://mailjet.href']],
+                    'Cc' => [],
+                    'Bcc' => []]]];
     }
 }

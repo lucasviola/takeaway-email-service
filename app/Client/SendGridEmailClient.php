@@ -7,6 +7,7 @@ namespace App\Client;
 use App\Exceptions\SendGridNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
+use App\Model\SendGridResponse;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -21,15 +22,16 @@ class SendGridEmailClient
         $this->client = $client;
     }
 
-    public function postMessage(Message $message)
+    public function postMessage(Message $message): SendGridResponse
     {
         try {
             $response = $this->client->post('https://api.sendgrid.com/v3/mail/send',
                 $this->buildRequestOptions($message));
 
-            $sendgridResponse = json_decode($response->getBody()->getContents());
+            $sendgridResponse =
+                new SendGridResponse(json_decode($response->getBody()->getContents()));
 
-            return $this->messageMapper->mapSendgridResponseToMessageResponse();
+            return $sendgridResponse;
         } catch (GuzzleException $e) {
             throw new SendGridNotAvailableException("Sendgrid not available");
         }

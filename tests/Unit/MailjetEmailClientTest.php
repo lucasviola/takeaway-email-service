@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Exceptions\MailjetNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Client\MailjetEmailClient;
+use App\Model\MailjetResponse;
 use App\Model\Message;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -29,7 +30,7 @@ class MailjetEmailClientTest extends TestCase
         $this->message = $this->buildMessage($messageId);
         $client = new MockHandler([
             new Response(200, ['content-type' => 'application/json'],
-                $this->buildMailjetResponseBody()),
+                $this->buildMailjetResponseStub()),
         ]);
         $handlerStack = HandlerStack::create($client);
         $this->httpClient = new Client(['handler' => $handlerStack]);
@@ -37,11 +38,12 @@ class MailjetEmailClientTest extends TestCase
     }
 
     public function testWhenApiReturnsOkShouldMapResponseToDomainMessage() {
-        $expectedResponse = ['messageId' => '1152921511742440156', 'status' => 'success'];
+        $expectedMailjetResponse =
+            new MailjetResponse($this->buildMailjetResponse());
 
         $actualResponse = $this->mailjetEmailClient->postMessage($this->message);
 
-        $this->assertEquals($actualResponse, $expectedResponse);
+        $this->assertEquals($actualResponse, $expectedMailjetResponse);
     }
 
     public function testShouldBuildRequestOptionsFromMessage() {
@@ -73,8 +75,31 @@ class MailjetEmailClientTest extends TestCase
         $badMailjetClient->postMessage($this->message);
     }
 
-    private function buildMailjetResponseBody(): string {
-        return '{"Messages":[{"Status":"success","CustomID":"developmentTest","To":[{"Email":"lucasmatzenbacher@gmail.com","MessageUUID":"fa2f032e-299e-4541-9ec0-b83f86e673f2","MessageID":1152921511742440156,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921511742440156"}],"Cc":[],"Bcc":[]}]}';
+    private function buildMailjetResponseStub(): string {
+        return '{"Messages":[{"Status":"success","CustomID":"messageId","To":[{"Email":"test@email.com","MessageUUID":"test","MessageID":123,"MessageHref":"https://mailjet.href"}],"Cc":[],"Bcc":[]}]}';
+    }
+
+    private function buildMailjetResponse() {
+        return [
+            'Messages' => [
+                0 => [
+                    'Status' => 'success',
+                    'CustomID' => 'messageId',
+                    'To' => [
+                        0 => [
+                            'Email' => 'test@email.com',
+                            'MessageUUID' => 'test',
+                            'MessageID' => '123',
+                            'MessageHref' => 'https://mailjet.href'
+                        ],
+                    ],
+                    'Cc' => [
+                    ],
+                    'Bcc' => [
+                    ],
+                ],
+            ]
+        ];
     }
 
     private function buildMessage($messageId): Message

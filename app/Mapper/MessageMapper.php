@@ -5,9 +5,11 @@ namespace App\Mapper;
 
 
 use App\MessageEntity;
-use App\Model\From;
+use App\Model\MailjetResponse;
 use App\Model\Message;
-use App\Model\To;
+use App\Model\MessageSent;
+use App\Model\MessageStatus;
+use App\Model\SendGridResponse;
 
 class MessageMapper
 {
@@ -127,5 +129,29 @@ class MessageMapper
         ];
 
         return new MessageEntity($attributes);
+    }
+
+    public function mapFromSendgridResponseToMessageSent(SendGridResponse $sendGridResponse)
+    {
+        $attributes = [
+            'messageId' => uniqid(),
+            'status' => Messagestatus::SENT
+        ];
+
+        $messageSent = new MessageSent($attributes);
+
+        return $messageSent;
+    }
+
+    public function mapFromMailjetResponseToMessageSent(MailjetResponse $mailjetResponse): MessageSent
+    {
+        $attributes = [
+            'messageId' => $mailjetResponse->getAttributes()['Messages'][0]['CustomID'],
+            'status' => $mailjetResponse->getAttributes()['Messages'][0]['Status']
+        ];
+
+        $messageSent = new MessageSent($attributes);
+
+        return $messageSent;
     }
 }

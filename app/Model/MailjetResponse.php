@@ -1,12 +1,14 @@
 <?php
 
+
 namespace App\Model;
 
-class Message
-{
-    private $attributes = [];
 
-    public function __construct(array $attributes)
+class MailjetResponse
+{
+    protected array $attributes;
+
+    public function __construct($attributes)
     {
         $this->attributes = $attributes;
     }
@@ -15,5 +17,4 @@ class Message
     {
         return $this->attributes;
     }
-
 }

@@ -6,9 +6,11 @@ namespace App\Client;
 
 use App\Exceptions\MailjetNotAvailableException;
 use App\Mapper\MessageMapper;
+use App\Model\MailjetResponse;
 use App\Model\Message;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Log;
 
 class MailjetEmailClient
 {
@@ -21,15 +23,16 @@ class MailjetEmailClient
         $this->client = $client;
     }
 
-    public function postMessage(Message $message): array
+    public function postMessage(Message $message): MailjetResponse
     {
         try {
             $response = $this->client->post('https://api.mailjet.com/v3.1/send',
                 $this->buildRequestOptions($message));
 
-            $mailjetResponse = json_decode($response->getBody()->getContents(), true);
+            $mailjetResponse =
+                new MailjetResponse(json_decode($response->getBody()->getContents(), true));
 
-            return $this->messageMapper->mapMailjetResponseToMessageResponse($mailjetResponse);
+            return $mailjetResponse;
         } catch (GuzzleException $e) {
             throw new MailjetNotAvailableException("Mailjet not available");
         }

@@ -2,11 +2,11 @@
 
 namespace App\Model;
 
-class Message
+class MessageSent
 {
-    private $attributes = [];
+    protected array $attributes;
 
-    public function __construct(array $attributes)
+    public function __construct($attributes)
     {
         $this->attributes = $attributes;
     }
@@ -15,5 +15,4 @@ class Message
     {
         return $this->attributes;
     }
-
 }

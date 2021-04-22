@@ -6,6 +6,8 @@ use App\Client\MailjetEmailClient;
 use App\Client\SendGridEmailClient;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
+use App\Model\MessageSent;
+use App\Model\MessageStatus;
 use App\Service\PostEmailService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -22,22 +24,22 @@ class PostEmailServiceTest extends TestCase
         $message = $this->buildMessage($messageId);
         $badMailjetClient = $this->mockMailjetClient();
         $goodSendGridClient = $this->mockSendGridClient();
-        $postEmailService = new PostEmailService($badMailjetClient, $goodSendGridClient);
-        $expectedSendgridResponse = ['messageId' => 'sendgrid', 'status' => 'success'];
+        $postEmailService = new PostEmailService($badMailjetClient, $goodSendGridClient, new MessageMapper());
+        $expectedResponse = new MessageSent(['messageId' => $messageId, 'status' => MessageStatus::SENT]);
 
         $response = $postEmailService->post($message);
 
-        $this->assertEquals($response, $expectedSendgridResponse);
+        $this->assertEquals($response->getAttributes()['status'], $expectedResponse->getAttributes()['status']);
+        $this->assertNotNull($expectedResponse->getAttributes()['messageId']);
     }
     private function mockSendGridClient() {
         $mapper = new MessageMapper();
         $client = new MockHandler([
-            new Response(200, ['content-type' => 'application/json']),
+            new Response(200, ['content-type' => 'application/json'], '[]'),
         ]);
         $handlerStack = HandlerStack::create($client);
         $mockHttpClient = new Client(['handler' => $handlerStack]);
         return new SendGridEmailClient($mapper, $mockHttpClient);
-
     }
 
     private function mockMailjetClient() {

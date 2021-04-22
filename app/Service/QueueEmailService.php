@@ -5,6 +5,7 @@ namespace App\Service;
 
 
 use App\Client\RabbitMQClient;
+use App\Utils\JSONParser;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
 
@@ -22,7 +23,7 @@ class QueueEmailService
     public function publish(Message $message): void
     {
         $messageAsJson = $this->messageMapper->mapMessageToJson($message);
-        $messageAsString = json_encode($messageAsJson);
+        $messageAsString = JSONParser::parseToString($messageAsJson);
 
         $this->rabbitMQClient->produceToRabbitMq($messageAsString);
     }

@@ -102,7 +102,9 @@ $ GET /messages
     }
 ]
 ```
-## Documentation
+## Architecture Documentation
+
+## Things I would improve
 
 
 

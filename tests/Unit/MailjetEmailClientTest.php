@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Exceptions\MailjetNotAvailableException;
+use App\Utils\JSONParser;
 use App\Mapper\MessageMapper;
 use App\Client\MailjetEmailClient;
 use App\Model\MailjetResponse;
@@ -53,7 +54,7 @@ class MailjetEmailClientTest extends TestCase
                 env('MAILJET_PRIVATE_KEY')
             ],
             'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => json_encode($this->mapper->mapMessageToMailjetMessage($this->message)),
+            'body' => JSONParser::parseToString($this->mapper->mapMessageToMailjetMessage($this->message)),
             'debug' => false
         ];
         $actualRequestOptions = $this->mailjetEmailClient->buildRequestOptions($this->message);

@@ -5,6 +5,8 @@ namespace App\Client;
 
 
 use App\Exceptions\MailjetNotAvailableException;
+use App\Utils\JSONParser;
+
 use App\Mapper\MessageMapper;
 use App\Model\MailjetResponse;
 use App\Model\Message;
@@ -30,7 +32,7 @@ class MailjetEmailClient
                 $this->buildRequestOptions($message));
 
             $mailjetResponse =
-                new MailjetResponse(json_decode($response->getBody()->getContents(), true));
+                new MailjetResponse(JSONParser::parseToJson($response->getBody()->getContents()));
 
             return $mailjetResponse;
         } catch (GuzzleException $e) {
@@ -45,7 +47,7 @@ class MailjetEmailClient
                 env('MAILJET_PRIVATE_KEY')
             ],
             'headers'  => ['content-type' => 'application/json', 'Accept' => 'application/json'],
-            'body' => json_encode($this->messageMapper->mapMessageToMailjetMessage($message)),
+            'body' => JSONParser::parseToString($this->messageMapper->mapMessageToMailjetMessage($message)),
             'debug' => false
         ];
     }

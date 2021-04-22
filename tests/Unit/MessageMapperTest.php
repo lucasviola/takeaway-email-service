@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Utils\JSONParser;
 use App\Mapper\MessageMapper;
 use App\MessageEntity;
 use App\Model\MailjetResponse;
@@ -78,7 +79,7 @@ class MessageMapperTest extends TestCase
     public function testShouldMapFromMailjetMessageToMessageResponse() {
         $messageMapper = new MessageMapper();
         $mailjetResponseAsString = $this->buildMailjetResponseBody();
-        $externalServiceResponse = json_decode($mailjetResponseAsString,true);
+        $externalServiceResponse = JSONParser::parseToJson($mailjetResponseAsString);
         $expectedMessageResponse = ['messageId' => '1152921511742440156', 'status' => 'success'];
 
         $actualMessageResponse = $messageMapper->mapMailjetResponseToMessageResponse($externalServiceResponse);

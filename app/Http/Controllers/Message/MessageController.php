@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Message;
 
 use App\Http\Controllers\Controller;
+use App\Utils\JSONParser;
 use App\Mapper\MessageMapper;
 use App\Service\MessageService;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +22,7 @@ class MessageController extends Controller
 
     public function send(Request $request): JsonResponse
     {
-        $requestBody = json_decode($request->getContent(), true);
+        $requestBody = JSONParser::parseToJson($request->getContent());
 
         $messageId = uniqid();
         $status = 'Queued';
@@ -29,7 +30,7 @@ class MessageController extends Controller
 
         $this->service->sendEmail($message);
 
-        $response = ['messageId' => $messageId,'messageStatus' => 'Queued'];
+        $response = ['messageId' => $messageId,'messageStatus' => 'Posted'];
         return response()->json($response, 202);
     }
 

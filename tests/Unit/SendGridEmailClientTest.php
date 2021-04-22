@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Client\SendGridEmailClient;
 use App\Exceptions\SendGridNotAvailableException;
+use App\Utils\JSONParser;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
 use App\Model\SendGridResponse;
@@ -50,7 +51,7 @@ class SendGridEmailClientTest extends TestCase
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . env('SENDGRID_API_KEY')
             ],
-            'body' => json_encode($this->mapper->mapMessageToSendgridMessage($this->message)),
+            'body' => JSONParser::parseToString($this->mapper->mapMessageToSendgridMessage($this->message)),
             'debug' => false
         ];
 

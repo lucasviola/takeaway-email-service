@@ -5,6 +5,7 @@ namespace App\Client;
 
 
 use App\Exceptions\SendGridNotAvailableException;
+use App\Utils\JSONParser;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
 use App\Model\SendGridResponse;
@@ -29,7 +30,7 @@ class SendGridEmailClient
                 $this->buildRequestOptions($message));
 
             $sendgridResponse =
-                new SendGridResponse(json_decode($response->getBody()->getContents()));
+                new SendGridResponse(JSONParser::parseToJson($response->getBody()->getContents()));
 
             return $sendgridResponse;
         } catch (GuzzleException $e) {
@@ -44,7 +45,7 @@ class SendGridEmailClient
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . env('SENDGRID_API_KEY')
             ],
-            'body' => json_encode($this->messageMapper->mapMessageTosendgridMessage($message)),
+            'body' => JSONParser::parseToString($this->messageMapper->mapMessageTosendgridMessage($message)),
             'debug' => false
         ];
     }

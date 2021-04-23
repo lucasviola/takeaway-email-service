@@ -14,16 +14,19 @@ This was built with:
 
 ## How to run the app
 0. Setup your environment
+```shell
+$ cp .env.example .env
 ```
-You will need these three env vars in order to sent e-mails:
+You will need these three env vars in order to send e-mails:
+```shell
 MAILJET_PUBLIC_KEY=
 MAILJET_PRIVATE_KEY=
 SENDGRID_API_KEY=
-
+```
 You can get them at Sendgrid and Mailjet, or you can ask me and I can
 borrow you mine :)
 Every other environment variable is set.
-```
+
 1. Run the app with docker compose
 ```shell
 docker compose build app
@@ -123,18 +126,25 @@ $ GET /messages
 
 My whole idea here was to receive the message and be able to quickly
 respond to the client and do the heavy lifting asynchronously using a queuing system 
-so we could quickly respond to the client. I decided to use RabbitMQ be cause we would
-gain dead letter queues for failed messages (which would add more reliability so we do not lose messages)
-and because if we wanted to scale horizontally we could easily do it by adding more consumers (just spin up
-a new machine and you got yourself a consumer).
+so we could quickly respond to the client. 
+I decided to use RabbitMQ because we would gain dead letter queues for failed messages 
+(which would add more reliability so we do not lose messages) and because if we wanted to 
+scale horizontally we could easily do it by adding more consumers(just spin up a new machine 
+and you got yourself a new consumer to double the power).
 
-I ended up not using RabbitMQ but using a plain laravel database queue instead.
-We still get the horizontal scalability and high response time, but not the retries.
+I ended up not using RabbitMQ but using a standard laravel database queue instead.
+We still get the horizontal scalability and fast response time, but not the retries 
+(altough we have a log of the failed jobs in the DB so we could retry them if wanted).
 
 ## Things I would improve
 
 1. Use RabbitMQ instead of laravel's database queue
-2. Add integration testing
+
+2. Add more integration testing
+Since PHP is not my area of expertise I had a hard time finding the required tools for
+   doing it the right way.
+
+
 
 
 

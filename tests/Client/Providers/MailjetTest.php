@@ -14,7 +14,8 @@ class MailjetTest extends TestCase
 
     public function testShouldBuildRequestOptionsFromMessage() {
         $mapper = new MessageMapper();
-        $mailjetRequestBody = $mapper->mapMessageToMailjetMessage($this->buildMessage(uniqid()));
+        $message = $this->buildMessage(uniqid());
+        $mailjetRequestBody = $mapper->mapMessageToMailjetMessage($message);
         $expectedRequestOptions = [
             'auth' => [
                 env('MAILJET_PUBLIC_KEY'),
@@ -25,7 +26,7 @@ class MailjetTest extends TestCase
             'debug' => false
         ];
 
-        $actualRequestOptions = Mailjet::buildRequestOptions($mailjetRequestBody);
+        $actualRequestOptions = Mailjet::buildRequestOptions($message);
 
         $this->assertEquals($actualRequestOptions, $expectedRequestOptions);
     }
@@ -47,4 +48,5 @@ class MailjetTest extends TestCase
         ];
         return new Message($attributes);
     }
+
 }

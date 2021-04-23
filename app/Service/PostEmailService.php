@@ -25,11 +25,11 @@ class PostEmailService
     public function post(Message $message): MessageSent
     {
         try {
-            Log::info('[PostEmailService@post] - Posting message to email providers');
+            Log::info('[PostEmailService@post] - Posting message to email providers.');
 
             $mailjetResponse =  $this->client->post(
                 Mailjet::URL,
-                Mailjet::buildRequestOptions($message->getAttributes()));
+                Mailjet::buildRequestOptions($message));
 
             $messageSent = $this->messageMapper->mapFromMailjetResponseToMessageSent($mailjetResponse);
 
@@ -38,7 +38,7 @@ class PostEmailService
             Log::warning('[PostEmailService@post] - Activating e-mail provider fallback');
 
             $sendGridResponse = $this->client->post(SendGrid::URL,
-                SendGrid::buildRequestOptions($message->getAttributes()));
+                SendGrid::buildRequestOptions($message));
 
             $messageSent = $this->messageMapper->mapFromSendgridResponseToMessageSent($sendGridResponse);
 

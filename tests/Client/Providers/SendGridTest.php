@@ -13,7 +13,8 @@ class SendGridTest extends TestCase
 {
     public function testShouldBuildRequestOptionsWithAuthorizationBearerAndMessagePayload() {
         $mapper = new MessageMapper();
-        $sendGridRequestBody = $mapper->mapMessageToSendgridMessage($this->buildMessage(uniqid()));
+        $message = $this->buildMessage(uniqid());
+        $sendGridRequestBody = $mapper->mapMessageToSendgridMessage($message);
         $expectedRequestOptions = [
             'headers'  => [
                 'content-type' => 'application/json',
@@ -24,7 +25,7 @@ class SendGridTest extends TestCase
             'debug' => false
         ];
 
-        $actualRequestOptions = SendGrid::buildRequestOptions($sendGridRequestBody);
+        $actualRequestOptions = SendGrid::buildRequestOptions($message);
 
         $this->assertEquals($actualRequestOptions, $expectedRequestOptions);
     }

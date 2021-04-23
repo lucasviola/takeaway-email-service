@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Model;
+namespace App\Client\Providers;
 
 
-class SendGridResponse
+class EmailProviderResponse
 {
     protected array $attributes;
 
@@ -17,4 +17,5 @@ class SendGridResponse
     {
         return $this->attributes;
     }
+
 }

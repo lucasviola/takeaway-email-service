@@ -2,9 +2,10 @@
 
 namespace App\Service;
 
-use App\Client\MailjetEmailClient;
-use App\Client\SendGridEmailClient;
-use App\Exceptions\MailjetNotAvailableException;
+use App\Client\Client;
+use App\Client\Providers\Mailjet;
+use App\Client\Providers\SendGrid;
+use App\Exceptions\ProviderNotAvailableException;
 use App\Mapper\MessageMapper;
 use App\Model\Message;
 use App\Model\MessageSent;
@@ -12,16 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 class PostEmailService
 {
-    private MailjetEmailClient $mailjetClient;
-    private SendGridEmailClient $sendGridEmailClient;
+    private Client $client;
     private MessageMapper $messageMapper;
 
-    public function __construct(MailjetEmailClient $mailjetClient,
-                                SendGridEmailClient $sendGridEmailClient,
-                                MessageMapper $messageMapper)
+    public function __construct(Client $client, MessageMapper $messageMapper)
     {
-        $this->mailjetClient = $mailjetClient;
-        $this->sendGridEmailClient = $sendGridEmailClient;
+        $this->client = $client;
         $this->messageMapper = $messageMapper;
     }
 
@@ -30,15 +27,18 @@ class PostEmailService
         try {
             Log::info('[PostEmailService@post] - Posting message to email providers');
 
-            $mailjetResponse =  $this->mailjetClient->postMessage($message);
+            $mailjetResponse =  $this->client->post(
+                Mailjet::URL,
+                Mailjet::buildRequestOptions($message->getAttributes()));
 
             $messageSent = $this->messageMapper->mapFromMailjetResponseToMessageSent($mailjetResponse);
 
             return $messageSent;
-        } catch (MailjetNotAvailableException $e) {
+        } catch (ProviderNotAvailableException $e) {
             Log::warning('[PostEmailService@post] - Activating e-mail provider fallback');
 
-            $sendGridResponse = $this->sendGridEmailClient->postMessage($message);
+            $sendGridResponse = $this->client->post(SendGrid::URL,
+                SendGrid::buildRequestOptions($message->getAttributes()));
 
             $messageSent = $this->messageMapper->mapFromSendgridResponseToMessageSent($sendGridResponse);
 

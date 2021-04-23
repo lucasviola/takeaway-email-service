@@ -35,8 +35,7 @@ class MessageController extends Controller
         $requestBody = JSONParser::parseToJson($request->getContent());
 
         if ($this->requestValidator->hasErrors($requestBody)) {
-            Log::error('[MessageController@send] - Message contains validation errors: ' .
-                $this->requestValidator->getErrors());
+            Log::error('[MessageController@send] - Message contains validation errors.');
 
             return response()->json(['error' => $this->requestValidator->getErrors()],
                 400);
@@ -49,7 +48,6 @@ class MessageController extends Controller
         SendEmailJob::dispatch($message);
 
         $response = ['messageId' => $messageId,'messageStatus' => MessageStatus::QUEUED];
-
         return response()->json($response, 202);
     }
 

@@ -1,10 +1,11 @@
 <?php
 
+
 namespace App\Exceptions;
 
 use Exception;
 
-class MailjetNotAvailableException extends Exception
+class ProviderNotAvailableException extends Exception
 {
 
     public function context()

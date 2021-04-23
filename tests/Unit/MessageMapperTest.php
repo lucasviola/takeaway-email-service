@@ -2,14 +2,13 @@
 
 namespace Tests\Unit;
 
-use App\Utils\JSONParser;
 use App\Mapper\MessageMapper;
 use App\MessageEntity;
-use App\Model\MailjetResponse;
+use App\Client\Providers\EmailProviderResponse;
 use App\Model\Message;
 use App\Model\MessageSent;
 use App\Model\MessageStatus;
-use App\Model\SendGridResponse;
+use App\Utils\JSONParser;
 use Tests\TestCase;
 
 class MessageMapperTest extends TestCase
@@ -142,7 +141,7 @@ class MessageMapperTest extends TestCase
     }
 
     public function testShouldMapFromSendGridResponseToMessageSent() {
-        $sendGridResponse = new SendGridResponse([]);
+        $sendGridResponse = new EmailProviderResponse([]);
 
         $actualMessageSent = $this->messageMapper->mapFromSendgridResponseToMessageSent($sendGridResponse);
 
@@ -152,7 +151,7 @@ class MessageMapperTest extends TestCase
 
     public function testShouldMapFromMailjetResponseToMessageSent() {
         $attributes = $this->buildMailjetResponse();
-        $mailjetResponse = new MailjetResponse($attributes);
+        $mailjetResponse = new EmailProviderResponse($attributes);
         $expectedMessageSent = new MessageSent([
             'status' => 'success',
             'messageId' => 'test'

@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Model\Message;
 use App\Service\PostEmailService;
+use App\Utils\JSONParser;
 use Illuminate\Console\Command;
 
 class PostMessage extends Command
 {
     protected $signature = 'message:post';
     protected $description = 'Send e-mail message to provider and saves it to the database.';
-
-    private PostEmailService $postEmailService;
 
     public function __construct(PostEmailService $postEmailService)
     {
@@ -20,9 +20,7 @@ class PostMessage extends Command
 
     public function handle()
     {
-        $input = $this->ask('JSON Message to be sent: ');
-
-
+        $this->alert('To be implemented.');
         return 0;
     }
 }

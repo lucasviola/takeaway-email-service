@@ -31,3 +31,5 @@ get-messages:
 queue-work:
 	docker compose exec $(APP_NAME) php artisan queue:work
 
+setup: migrate queue-work
+

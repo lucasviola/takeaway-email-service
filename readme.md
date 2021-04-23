@@ -13,6 +13,17 @@ This was built with:
 2. Make (optional)
 
 ## How to run the app
+0. Setup your environment
+```
+You will need these three env vars in order to sent e-mails:
+MAILJET_PUBLIC_KEY=
+MAILJET_PRIVATE_KEY=
+SENDGRID_API_KEY=
+
+You can get them at Sendgrid and Mailjet, or you can ask me and I can
+borrow you mine :)
+Every other environment variable is set.
+```
 1. Run the app with docker compose
 ```shell
 docker compose build app
@@ -22,12 +33,16 @@ docker compose up -d
 ```shell
 docker compose exec php artisan migrate
 ```
+3. Run the queue worker
+```shell
+docker compose exec php queue:work
+```
 
 Or if you have make installed you can run
 ```shell
 $ make build
 $ make start
-$ make migrate
+$ make setup
 ```
 
 ## Other useful make commands
@@ -51,6 +66,7 @@ $ make install
 ```shell
 $ make get-messages
 ```
+
 ## API Endpoints
 This API has 2 endpoints. One for sending a message and another one
 for retrieving all messages. They are documented as below.
@@ -103,8 +119,22 @@ $ GET /messages
 ]
 ```
 ## Architecture Documentation
+![alt text](./doc/tms-architecture.png "Title")
+
+My whole idea here was to receive the message and be able to quickly
+respond to the client and do the heavy lifting asynchronously using a queuing system 
+so we could quickly respond to the client. I decided to use RabbitMQ be cause we would
+gain dead letter queues for failed messages (which would add more reliability so we do not lose messages)
+and because if we wanted to scale horizontally we could easily do it by adding more consumers (just spin up
+a new machine and you got yourself a consumer).
+
+I ended up not using RabbitMQ but using a plain laravel database queue instead.
+We still get the horizontal scalability and high response time, but not the retries.
 
 ## Things I would improve
+
+1. Use RabbitMQ instead of laravel's database queue
+2. Add integration testing
 
 
 
